@@ -1,6 +1,5 @@
 
-// Récupération du modèle jsonwebtoken
-
+// Récupération du modèle jsonwebtoken et des variables d'environnement
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 

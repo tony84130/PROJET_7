@@ -1,10 +1,26 @@
 
-// Récupération du modèle jsonwebtoken
-
+// Récupération du modèle jsonwebtoken et des variables d'environnement
 const jwt = require('jsonwebtoken');
-const UserModel = require('../models/User');
 require('dotenv').config();
 
+module.exports = (req,res,next) => {
+  try{
+      const token = req.headers.authorization.split(' ')[1];
+      const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
+      const userId = decodedToken.userId;
+      req.auth = {userId};
+      if (req.body.userId && req.body.userId !== userId) {
+          throw 'UserId non valide!';
+      } else {
+          console.log('UserId valide!');
+          next();
+      }
+  } catch {
+      res.status(401).json({error: 'Requête invalide, non autorisé !'});
+  }
+};
+
+/*
 module.exports = (req, res, next) => {
   try {
     const token = req.cookies.jwt;
@@ -26,4 +42,4 @@ module.exports = (req, res, next) => {
     });
   }
 };
-
+*/

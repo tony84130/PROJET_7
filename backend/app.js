@@ -8,8 +8,10 @@ const path = require('path');
 //const hpp = require('hpp');
 //const cors = require('cors');
 
-const postRoutes = require('./routes/post');
 const userRoutes = require('./routes/user');
+const postRoutes = require('./routes/post');
+const likeRoutes = require('./routes/like');
+const commentRoutes = require('./routes/comment');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -28,5 +30,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/auth', userRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/post', likeRoutes);
+app.use('/api/post', commentRoutes);
 
 module.exports = app;

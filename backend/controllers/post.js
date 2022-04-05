@@ -2,234 +2,119 @@ const dbc = require("../config/db");
 const db = dbc.getDB();
 const fs = require("fs");
 
-const Post = require('../models/Post');
-const User = require('../models/User');
-const objectID = require('mongoose').Types.ObjectId;
-
-/*
-Vérifier le tri des publications de la plus récente à la plus ancienne
-*/
-
+// Vérifier le tri des publications de la plus récente à la plus ancienne ??
 // Récupération de tous les posts
-exports.readPost = (req, res, next) => {
-    Post.find().sort({ createAt: -1 })
-    .then((posts) => res.status(200).json(posts))
-    .catch((error) => res.status(404).json({ error }));
+exports.getAllPost = (req, res, next) => {
+    const sql = `SELECT * FROM posts ORDER BY posterId`;
+
+    db.query(sql, (err, docs) => {
+        if (err) {
+            res.status(404).json({err});
+            throw err;
+        }
+        res.status(200).json(docs);
+    })
 };
+
+// Récupération d'un post
+exports.getOnePost = (req, res, next) => {
+    const post_id = req.params.id;
+    const sql = 'SELECT * FROM posts WHERE posts.id= ?';
+
+    db.query(sql, post_id, (err, docs) => {
+        if (err) res.status(404).json({err});
+        if (!err) res.status(200).json(docs);
+    })
+}
 
 // Création d'un post
 exports.createPost = (req, res, next) => {
+    console.log(req.body.message)
+    if (req.file) {
+        console.log(req.file);
+        const imageUrl = `${req.protocol}://${req.get("host")}/images/posts/${req.file.filename}`;
+    
+    console.log(imageUrl);
 
-    //const imageurl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null;
-
-    const newPost = new Post({
-        posterId: req.body.posterId,
+    const newPostWithImage = {
         message: req.body.message,
-        //picture: req.body.picture,
-        video: req.body.video,
-        likers: [],
-        comments: []
-    })
+        posterId: `${req.auth.userId}`,
+        picture: imageUrl
+    };
+    const sql = "INSERT INTO posts SET ?";
+    db.query(sql, newPostWithImage, (err, docs) => {
+        if (err) throw err;
+        res.status(200).json({message: "Post créé !"});
+    });
+    return;
+    }
+    const newPost = {
+        message: req.body.message,
+        posterId: `${req.auth.userId}`,
+        picture: null
+    }
 
-    try {
-        newPost.save()
-        .then(() => res.status(201).json({ message: 'Post créé !' }))
-        .catch(error => res.status(400).json({ error }));
-    }
-    catch (err) {
-        return res.status(400).send(err)
-    }
-};
+    const sql = "INSERT INTO posts SET ?"
+    db.query(sql, newPost, (err, docs) => {
+        if (err) throw err;
+        res.status(200).json({message: "Post crée !"})
+    })
+}
 
 // Modification d'un post
 exports.updatePost = (req, res, next) => {
-    if (!objectID.isValid(req.params.id)) {
-        return res.status(400).send('ID unknown : ' + req.params.id)
-    }
-
-    const updatedRecord  = {
-        message: req.body.message
-    }
-
-    Post.findByIdAndUpdate(
-        req.params.id,
-        { $set: updatedRecord },
-        { new: true },
-        (err, docs) => {
-            if (!err) { res.send(docs); }
-            else { console.log('Update error : + err') }
+    const post_id = req.params.id;
+    const post_text = req.body.message;
+    const sql = `UPDATE posts SET message = "${post_text}" WHERE id = ${post_id};`;
+    db.query(sql, (err, docs) => {
+        if (err) {
+            res.status(404).json({ err });
+            throw err;
         }
-    )
+        res.status(200).json({message: `Post ${post_id} modifié !`});
+  });
 };
 
-// Suppression d'un post
+// Suppression d'un post par l'auteur ou par l'administrateur
 exports.deletePost = (req, res, next) => {
-    if (!objectID.isValid(req.params.id)) {
-        return res.status(400).send('ID unknown : ' + req.params.id)
-    }
+    const postId = req.params.id;
+    const userId = req.auth.userId;
+    const sqlAdminInfos = "SELECT isAdmin FROM users WHERE id = ?";
+    let adminCheckout = null;
+    const sqlInfos = "SELECT * FROM posts WHERE id = ?";
+    let filename = "";
 
-    Post.findOne({ _id: req.params.id })
-    .then(() => {
-        Post.deleteOne({ _id: req.params.id })
-          .then(() => res.status(200).json({ message: 'Post supprimé !'}))
-          .catch(error => res.status(400).json({ error }));
-    })
-    .catch(error => res.status(500).json({ error }));
-};
+    db.query(sqlAdminInfos, [userId], (err, docs) => {
+        //if (err) throw err;
+        if (err) console.log(err);
+        adminCheckout = docs[0].isAdmin;
 
-// Ajout d'un like
-exports.likePost = (req, res, next) => {
-    if (!objectID.isValid(req.params.id)) {
-        return res.status(400).send('ID unknown : ' + req.params.id)
-    }
-
-    try {
-        Post.findByIdAndUpdate(
-            req.params.id,
-            {
-                $addToSet: { likers: req.body.id }
-            },
-            { new: true },
-            (err, docs) => {
-                if (err) { return res.status(400).send(err) }
+        db.query(sqlInfos, [postId], (err, docs) => {
+            if (err) throw err;
+            if (docs[0].picture) {
+                filename = docs[0].picture.split("/images/posts/")[1];
+                console.log(filename);
             }
-        );
-        User.findByIdAndUpdate(
-            req.body.id,
-            {
-                $addToSet: { likes: req.params.id }
-            },
-            { new: true },
-            (err, docs) => {
-                if (!err) { res.send(docs) }
-                else { return res.status(400).send(err) }
-            }
-        )
-    }
-    catch (err) {
-        return res.status(400).send(err)
-    }
-};
-
-// Retrait d'un like
-exports.unlikePost = (req, res, next) => {
-    if (!objectID.isValid(req.params.id)) {
-        return res.status(400).send('ID unknown : ' + req.params.id)
-    }
-
-    try {
-        Post.findByIdAndUpdate(
-            req.params.id,
-            {
-                $pull: { likers: req.body.id }
-            },
-            { new: true },
-            (err, docs) => {
-                if (err) { return res.status(400).send(err) }
-            }
-        );
-        User.findByIdAndUpdate(
-            req.body.id,
-            {
-                $pull: { likes: req.params.id }
-            },
-            { new: true },
-            (err, docs) => {
-                if (!err) { res.send(docs) }
-                else { return res.status(400).send(err) }
-            }
-        )
-    }
-    catch (err) {
-        return res.status(400).send(err)
-    }
-};
-
-// Ajout d'un commentaire
-exports.commentPost = (req, res, next) => {
-    if (!objectID.isValid(req.params.id)) {
-        return res.status(400).send('ID unknown : ' + req.params.id)
-    }
-
-    try {
-        return Post.findByIdAndUpdate(
-            req.params.id,
-            {
-                $push: {
-                    comments: {
-                        commenterId: req.body.commenterId,
-                        commenterPseudo: req.body.commenterPseudo,
-                        text: req.body.text,
-                        timestamp: new Date().getTime()
+            if (userId == docs[0].posterId || adminCheckout == 1) {
+                const sql = `DELETE FROM posts WHERE id = ${postId}`;
+                db.query(sql, (err, docs) => {
+                    if (err) {
+                        res.status(404).json({err});
+                        throw err;
                     }
-                }
-            },
-            { new: true },
-            (err, docs) => {
-                if (!err) { return res.send(docs) }
-                else { return res.status(400).send(err) }
-            }
-        )
-    }
-    catch (err) {
-        return res.status(400).send(err)
-    }
-}
-
-// Modification d'un commentaire
-exports.editCommentPost = (req, res, next) => {
-    if (!objectID.isValid(req.params.id)) {
-        return res.status(400).send('ID unknown : ' + req.params.id)
-    }
-
-    try {
-        return Post.findById(
-            req.params.id,
-            (err, docs) => {  
-                const theComment = docs.comments.find((comment) => 
-                    comment._id==req.body.commentId
-                )
-                
-                if (!theComment) { res.status(404).send('Comment not found') }
-                else { theComment.text = req.body.text }
-
-                return docs.save((err) => {
-                    if (!err) { return res.status(200).send(docs) }
-                    else { res.status(500).send(err) }
+                    if (filename) {
+                        fs.unlink(`images/posts/${filename}`, () => {
+                            if (err) console.log(err);
+                            else console.log("Image supprimé !");
+                        })
+                    }
+                    res.status(200).json({message: "Post supprimé !"});
+                    console.log("Post supprimé !")
                 })
-                
             }
-        )
-    }
-    catch (err) {
-        return res.status(400).send(err)
-    }
-}
-
-// Suppression d'un commentaire
-exports.deleteCommentPost = (req, res, next) => {
-    if (!objectID.isValid(req.params.id)) {
-        return res.status(400).send('ID unknown : ' + req.params.id)
-    }
-
-    try {
-        return Post.findByIdAndUpdate(
-            req.params.id,
-            {
-                $pull: {
-                    comments: {
-                        _id: req.body.commentId
-                    }
-                }
-            },
-            { new: true },
-            (err, docs) => {
-                if (!err) { return res.send(docs) }
-                else { return res.status(400).send(err) }
+            else {
+                return res.status(403).json({error: "Accès refusé !"})
             }
-        )
-    }
-    catch (err) {
-        return res.status(400).send(err)
-    }
-}
+        })
+    })
+};
