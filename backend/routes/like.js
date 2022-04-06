@@ -5,7 +5,7 @@ const express = require('express');
 const router = express.Router();
 const likeCtrl = require('../controllers/like');
 
-// Ajouts des middlewares
+// Récupération des middlewares
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 
@@ -13,6 +13,7 @@ const multer = require('../middleware/multer-config');
 router.post('/like-post/:id', auth, likeCtrl.likePost);
 router.get('/get-like-post/:id', auth, likeCtrl.getLikePost);
 
+// Compteur de like ??
 //router.get('/count-like-post/:id', /*auth,*/ postCtrl.countLikePost);
 
 module.exports = router;

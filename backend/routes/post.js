@@ -3,8 +3,10 @@
 const express = require('express');
 const router = express.Router();
 
+// Récupération du controller post
 const postCtrl = require('../controllers/post');
 
+// Récupération des middlewares
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 

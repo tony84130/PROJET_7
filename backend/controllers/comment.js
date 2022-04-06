@@ -32,9 +32,6 @@ exports.getCommentsPost = (req, res, next) => {
     });
 };
 
-
-
-
 // Modification d'un commentaire
 exports.editCommentPost = (req, res, next) => {
     if (!objectID.isValid(req.params.id)) {

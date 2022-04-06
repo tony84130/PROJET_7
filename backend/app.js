@@ -32,5 +32,7 @@ app.use('/api/auth', userRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/post', likeRoutes);
 app.use('/api/post', commentRoutes);
+//app.use('/api/like', likeRoutes);
+//app.use('/api/comment', commentRoutes);
 
 module.exports = app;

@@ -6,8 +6,10 @@ const router = express.Router();
 //const jwt = require('jsonwebtoken');
 //const multer = require('multer');
 
+// Récupération du controller user
 const userCtrl = require('../controllers/user');
 
+// Récupération des middlewares
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 const checkPassword = require("../middleware/password");

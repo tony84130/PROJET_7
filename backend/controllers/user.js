@@ -18,7 +18,7 @@ const creatToken = (id) => {
   })
 }
 
-// Vérifier pour le pseudo déjà existant ??
+// Vérifier pour le pseudo déjà existant ?? Celui dans les commentaires ??
 // Création d'un compte utilisateur
 exports.signUp = (req, res, next) => {
   console.log(req.body);
@@ -147,7 +147,6 @@ exports.getAllUsers = (req, res, next) => {
 // Récupération des infos d'un utilisateur
 exports.userInfo = (req, res, next) => {
   const userId = req.params.id;
-  // const sql = `SELECT * FROM users WHERE id='${userId}'`;
   const sql = `SELECT email, pseudo, isAdmin, bio, picture FROM users WHERE id='${userId}'`;
   let query = db.query(sql, (err, docs) => {
     if (err) throw err;
@@ -161,7 +160,6 @@ exports.userInfo = (req, res, next) => {
 exports.updateUser = (req, res, next) => {
   const userPageId = req.params.id;
   const userId = req.auth.userId;
-  // const userId = req.params.id;
   const pseudo = req.body.pseudo;
   const email = req.body.email;
   const bio = req.body.bio;
@@ -251,7 +249,7 @@ exports.updateUser = (req, res, next) => {
   });
 };
 
-// Supprimé les posts, likes et commentaires de l'utilisateur ??
+// Supprimé en cascade les posts, likes et commentaires de l'utilisateur ??
 // Suppression d'un utilisateur par l'auteur ou par l'administrateur
 exports.deleteUser = (req, res, next) => {
   const userPageId = req.params.id;
