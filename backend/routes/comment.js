@@ -10,7 +10,7 @@ const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 
 // Commentaires
-router.post('/comment/:id', auth, commentCtrl.commentPost);
+router.post('/comment/:id', /*auth,*/ commentCtrl.commentPost);
 //router.post("/:id/comment", auth, commentCtrl.commentPost);
 //router.patch('/edit-comment-post/:id', auth, commentCtrl.editCommentPost);
 router.delete('/delete-comment/:id', auth, commentCtrl.deleteCommentPost);

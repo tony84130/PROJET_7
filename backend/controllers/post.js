@@ -27,6 +27,18 @@ exports.getOnePost = (req, res, next) => {
     })
 }
 
+// Récupération des posts d'un utilisateur
+exports.getUserPost = (req, res, next) => {
+    const userId = req.params.id;
+    const sql = 'SELECT * FROM posts WHERE posts.posterId= ?';
+
+    db.query(sql, userId, (err, docs) => {
+        if (err) res.status(404).json({err});
+        if (!err) res.status(200).json(docs);
+    })
+  };
+
+
 // Création d'un post
 exports.createPost = (req, res, next) => {
     console.log(req.body.message)
@@ -39,6 +51,7 @@ exports.createPost = (req, res, next) => {
     const newPostWithImage = {
         message: req.body.message,
         posterId: `${req.auth.userId}`,
+        //posterPseudo: `${req.auth.userPseudo}`,
         picture: imageUrl
     };
     const sql = "INSERT INTO posts SET ?";
@@ -51,6 +64,7 @@ exports.createPost = (req, res, next) => {
     const newPost = {
         message: req.body.message,
         posterId: `${req.auth.userId}`,
+        //posterPseudo: `${req.auth.userPseudo}`,
         picture: null
     }
 

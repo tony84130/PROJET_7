@@ -18,20 +18,17 @@ const requireAuth = require('../middleware/require-auth');
 
 // Auth
 // signUp
-router.post('/signup', /*rateLimit,*//*auth, checkPassword,*/ userCtrl.signUp);
+router.post('/signup', /*rateLimit,*//* checkPassword,*/ userCtrl.signUp);
 // login
 router.post('/login', /*rateLimit, checkPassword,*/ userCtrl.login, /*requireAuth*/);
 // logout
 router.get('/logout', /*auth, checkPassword,*/ userCtrl.logout);
 
 // User display
-router.get('/', auth, userCtrl.getAllUsers);
-router.get('/:id', auth, userCtrl.userInfo);
+router.get('/', /*auth,*/ userCtrl.getAllUsers);
+router.get('/:id', /*auth,*/ userCtrl.userInfo);
+router.get('/profil', auth, userCtrl.userProfil);
 router.put('/:id', auth, multer.single('profil_image'), userCtrl.updateUser);
 router.delete('/:id', auth, userCtrl.deleteUser);
-
-// User follow and unfollow
-//router.post('/follow/:id', auth, userCtrl.follow);
-//router.delete('/unfollow/:id', auth, userCtrl.unfollow);
 
 module.exports = router;
