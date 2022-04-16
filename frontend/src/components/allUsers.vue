@@ -6,7 +6,8 @@
         <div id="suggestions">
 
             <div v-for="user in user" :key="user.id" id="user-suggestions">
-                <router-link to="/profil/?id=${{user.id}}" title="Profil">
+                <router-link :to="{ name: 'User-page', params:  {userId: user.id}}" title="Profil">
+                
 
                     <img v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
                     <img v-else src="../assets/avatar.png" alt="photo user">
@@ -169,6 +170,9 @@ export default {
         #user-suggestions img {
             height: 100%;
             margin-right: 10px;
+            width: 50px;
+            object-fit: cover;
+            border: 1px solid grey;
         }
 
         @media screen and (max-width: 1300px) {

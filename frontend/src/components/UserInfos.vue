@@ -15,7 +15,7 @@
                     <p>Modifier la biographie</p>
                     <div><i class="fas fa-cog"></i></div>
                 </div>
-                <div>
+                <div @click="deleteAccount">
                     <p>Supprimer le profil</p>
                     <div><i class="fas fa-trash"></i></div>
                 </div>
@@ -37,9 +37,6 @@ function getId() {
 }
 
 console.log(getId());
-//import CommentPost from '../components/CommentPost.vue'
-//import PreferButton from '../components/PreferButton.vue'
-//import BlocComment from '../components/BlocComment.vue'
 export default {
     name: "List-user",
     components: {
@@ -60,7 +57,7 @@ export default {
 },
     mounted() {
         this.userId = JSON.parse(localStorage.getItem("userId"));
-        let url = "http://localhost:3000/api/auth/29";
+        let url = `http://localhost:3000/api/auth/${this.userId}`;
         let options = {
             method: "GET",
             headers: {
@@ -79,7 +76,23 @@ export default {
         .catch(error => console.log(error))
     },
     methods: {
-        
+        deleteAccount() {
+            let url = `http://localhost:3000/api/auth/${this.userId}`;
+            let options = {
+                method: "DELETE",
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
+                }
+            };
+            fetch(url, options)
+                .then((response) => {
+                    console.log(response);
+                    localStorage.clear();
+                    alert("Compte supprimé !");
+                })
+                .then(this.$router.push("/signup"))
+                .catch(error => console.log(error))
+        },
     },
 }
 </script>

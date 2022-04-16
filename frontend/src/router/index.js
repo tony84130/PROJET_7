@@ -73,7 +73,7 @@ const routes = [
     path: "/test4",
     name: "Signup-page4",
     component: () =>
-      import("../views/Test-page4.vue"),
+      import("../views/Test-Post.vue"),
   },
   {
     path: "/test5",
@@ -103,13 +103,25 @@ const routes = [
     path: "/test9",
     name: "Signup-page9",
     component: () =>
-      import("../views/Test-signup.vue"),
+      import("../views/Test-addPost.vue"),
   },
   {
     path: "/test10",
     name: "Signup-page10",
     component: () =>
-      import("../views/Test-login.vue"),
+      import("../components/Post-liked.vue"),
+  },
+  {
+    path: "/liked",
+    name: "Liked-page",
+    component: () =>
+      import("../views/Liked-page.vue"),
+  },
+  {
+    path: "/test11",
+    name: "User-page",
+    component: () =>
+      import("../components/UserPage-TEST.vue"),
   },
 ];
 

@@ -20,7 +20,8 @@
                 <button type="submit">Connexion</button>
             </form>
             <div id="creation-compte">
-                <div>Vous n’avez pas de compte  ? <a>Inscrivez-vous</a></div>
+                <div>Vous n’avez pas de compte  ? <router-link to="/signup" title="signup">Inscrivez-vous</router-link></div>
+                
             </div>
         </div>
 
@@ -70,13 +71,13 @@ export default {
                         }
                         if (true, loginData) {
                         if(res.status == 401){
-                            alert("  Mot de passe incorrect ! ");
+                            alert(" Identifiant ou Mot de passe incorrect ! ");
                             return -1
                         }
                         localStorage.setItem("userId", content.userId)
                         localStorage.setItem("token", content.token)
                          this.$router.push("/home");
-                         alert(" Bienvenue sur Groupomania, vous pouvez à présent échanger avec votre équipe ! ");
+                         //alert(" Bienvenue sur Groupomania, vous pouvez à présent échanger avec votre équipe ! ");
                     }     
                 })
                     
@@ -105,6 +106,7 @@ export default {
 
         a, button {
             cursor: pointer;
+            text-decoration: none;
         }
 
         label {

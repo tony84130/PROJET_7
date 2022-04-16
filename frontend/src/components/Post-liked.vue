@@ -1,9 +1,8 @@
-
 <template>
-    <div id="container-post" class="bloc">
+    <div id="container-centraux" class="bloc">
 
      <!-- Liste des posts -->   
-      <div v-for="post in post" :key="post.id" id="post">
+      <div v-for="post in post" id="post" :key="post.id" class="bloclist">
 
             <div id="first-line">
                 <div id="user-info">
@@ -12,9 +11,9 @@
                         <div>{{ post.posterId }}</div>
                     </a>
                 </div>
-                <button v-if="post.posterId" type="button" @click="deleteMessage(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
+                <button v-if="post.posterId" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
             </div>
-            <div id="photo-post" v-if="post.picture != null">
+            <div id="photo-post">
                 <a href="">
                     <img v-if="post.picture != null" :src="post.picture" :key="post.picture" alt="post user">
                 </a>
@@ -70,7 +69,7 @@ export default {
 },
     mounted() {
         this.userId = JSON.parse(localStorage.getItem("userId"));
-        let url = "http://localhost:3000/api/post/user/29";
+        let url = `http://localhost:3000/api/post/get-like-user/${this.userId}`;
         let options = {
             method: "GET",
             headers: {
@@ -92,7 +91,7 @@ export default {
     },
     methods: {
         
-        deleteMessage(id_post) {
+        deletePost(id_post) {
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let url = "http://localhost:3000/api/post/" + id_post;
             let options = {
@@ -112,7 +111,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 
         * {
             margin: 0px;
@@ -137,86 +136,28 @@ export default {
             background-color: #EFEFEF;
         }
 
-
         #container {
             display: flex;
-            width: 1000px;
+            justify-content: space-around;
+            padding: 10px;
+            padding-top: 80px;
+        }
+
+        #container-centraux {
+            width: 700px;
+            display: flex;
+            flex-direction: column;
             margin: auto;
             padding-top: 100px;
         }
 
-        #container-user {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px;
-            font-weight: bold;
-        }
-
-        #photo-profil {
-            width: 200px;
-            height: 200px;
-            margin-bottom: 10px;
-        }
-
-        #photo-profil img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 200px;
-        }
-
-        #container-secondaire {
-            margin: 20px;
-            width: 700px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #modif-and-delete-user {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0px 40px 0px;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        #modif-and-delete-user > div {
-            display: flex;
-            align-items: center;
-            border: 1px solid grey;
-            border-radius: 5px;
-            padding: 10px;
-            justify-content: space-between;
-            background-color: white;
-            font-weight: bold;
-            margin: 0px 10px;
-        }
-
-        #modif-and-delete-user i {
-            margin-left: 10px;
-        }
-
-        #bio-user div {
-            padding: 10px;
-            background-color: white;
-            border: 1px solid grey;
-            border-radius: 5px;
-        }
-
-        #container-post {
-            display: flex;
-            flex-wrap: wrap;
-            width: 1000px;
-            margin: auto;
+        #container-centraux > div {
+            margin: 0px 0px 15px 0px;
         }
 
         #post {
             border: 2px solid grey;
-            width: 450px;
-            flex-wrap: wrap;
-            margin: 24px;
-            height: min-content;
+            background-color: white;
         }
 
         #post:hover {
@@ -250,20 +191,15 @@ export default {
             border: none;
         }
 
-        #trash {
-            position: absolute;
-            right: 15px;
-        }
-
         #photo-post {
             width: 100%;
-            height: 300px;
+            height: 100%;
             border: 2px solid grey;
         }
 
         #photo-post img {
             width: 100%;
-            height: 100%;
+            height: 400px;
             object-fit: cover;
         }
 
@@ -306,6 +242,7 @@ export default {
             align-items: center;
             height: 50px;
             border: 1px solid grey;
+            border-radius: 0px 5px 5px 0px;
             margin-right: 10px;
             padding-right: 5px;
             font-weight: bold;
@@ -320,101 +257,69 @@ export default {
             padding: 5px;
         }
 
-        
+        #add-comment {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            background-color: white;
+            border: 1px solid grey;
+        }
+
+        #add-comment input {
+            background-color: white;
+            width: 85%;
+        }
+
+        #add-comment button {
+            padding: 5px;
+            background-color: #EFEFEF;
+            border: 1px solid grey;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+    
+        @media screen and (max-width: 1300px) {
+            #container-centraux {
+                left: -150px;
+            }
+        }
+
         @media screen and (max-width: 1050px) {
             #container {
-                width: 800px;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
             }
 
-            #container-secondaire {
-                width: 500px;
-            }
-
-            #container-post {
-                width: 850px;
-            }
-
-            #post {
-                width: 370px;
+            #container-centraux {
+                left: 0px;
             }
             
         }
 
-        @media screen and (max-width: 850px) {
-
-            #container {
-                width: 700px;
+        @media screen and (max-width: 750px) {
+            #container-centraux {
+                width: 500px;
             }
 
-            #container-secondaire {
-                width: 400px;
-            }
-
-            #container-post {
-                width: 700px;
-            }
-
-            #post {
-                width: 300px;
-            }
-
-        }
-
-        @media screen and (max-width: 700px) {
             #comment {
                 flex-direction: column;
                 align-items: flex-start;
                 padding: 10px;
             }
-
-            #container {
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                width: 500px;
-            }
-
-            #container-post {
-                width: 450px;
-            }
-
-            #post {
-                width: 450px;
-            }
-
         }
 
-
-
-        @media screen and (max-width: 500px) {
-
-            #container {
-                width: 300px;
-            }
-
-            #container-secondaire {
-                width: 300px;
-            }
-
-            #container-post {
+        @media screen and (max-width: 550px) {
+            #container-centraux {
                 width: 400px;
             }
-
-            #post {
-                width: 400px;
-            }
-
         }
 
-        @media screen and (max-width: 400px) {
-            #container-post {
+        @media screen and (max-width: 450px) {
+            #container-centraux {
                 width: 300px;
             }
-
-            #post {
-                width: 300px;
-            }
-
         }
-
 </style>

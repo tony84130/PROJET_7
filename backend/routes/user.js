@@ -25,10 +25,11 @@ router.post('/login', /*rateLimit, checkPassword,*/ userCtrl.login, /*requireAut
 router.get('/logout', /*auth, checkPassword,*/ userCtrl.logout);
 
 // User display
-router.get('/', /*auth,*/ userCtrl.getAllUsers);
-router.get('/:id', /*auth,*/ userCtrl.userInfo);
+router.get('/', auth, userCtrl.getAllUsers);
+router.get('/:id', auth, userCtrl.userInfo);
 router.get('/profil', auth, userCtrl.userProfil);
 router.put('/:id', auth, multer.single('profil_image'), userCtrl.updateUser);
+router.put('/profil/:id', auth, multer.single('profil_image'), userCtrl.updatePictureUser);
 router.delete('/:id', auth, userCtrl.deleteUser);
 
 module.exports = router;

@@ -1,90 +1,90 @@
-<template>
 
+<template>
     <div id="container">
 
         <div id="container-centraux">
             <h1 id="logo">Groupomania</h1>
             <div>Inscrivez-vous pour voir les publications de vos amis.</div>
-            <div id="creation-compte">
-                <label for="email">Adresse email *</label>
-                <input v-model="email" class="form-row__input" type="email" required @keyup.enter="login" placeholder="Email"/>
-                <label for="password">Adresse email *</label>
-                <input v-model="password" type="password" required @keyup.enter="login" class="form-row__input" placeholder="Mot de passe"/>
-                <label for="pseudo">Pseudo *</label>
-                <input v-model="pseudo" class="form-row__input" type="text" required @keyup.enter="login" placeholder="Pseudo"/>
+            <form v-on:submit.prevent="signup" id="creation-compte">
 
-                <button pill class="button" type="submit" @click="signup">
-                    <span>Connexion</span>
-                </button>
-            </div>
+                <label for="pseudo">Nom :</label>
+                <input type="text" id="pseudo" name="pseudo" class="form-control" placeholder="Pseudo" required 
+                pattern="^[^&amp;<>@&quot;()'!_$*€£`+=\/;?#]+$" v-model="inputSignup.pseudo"/>
+              
+                <label for="email">E-mail :</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="Email" required 
+                pattern="[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+.[a-zA-Z.]{2,15}" v-model="inputSignup.email"/>
+              
+                <label for="password"> Mot de passe :</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Mot de passe" required
+                pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" v-model="inputSignup.password"/>
+
+                <p>Le mot de passe doit être compris entre 8 et 20 caractères avec une majuscule et un chiffre minimum</p>
+                <button>Créer votre compte</button>
+            </form>
             <div>En vous inscrivant, vous acceptez nos Conditions générales.</div>
         </div>
 
         <div id="connection-compte">
-            <div>Vous avez un compte  ? <router-link to="/login">Connectez-vous</router-link></div>
+            <div>Vous avez un compte  ? <router-link to="/login" title="signup">Connectez-vous</router-link></div>
         </div>
-
     </div>
 
-
-  
+    <footer>
+        <div id="container-bas">
+            <div>Français</div>
+            <div>©2022</div>
+            <div>GROUPOMANIA</div>
+        </div>
+    </footer>
 </template>
 
 <script>
-import Axios from "axios";
 export default {
-  name: "Login-page3",
-  data() {
-    return {
-        pseudo: "",
-        email: "",
-        password: "",
-        error: "",
-    };
-  },
-  methods: {
-    //Fonction de connexion
-    signup() {
-      const user = {
-        pseudo: this.pseudo,
-        email: this.email,
-        password: this.password,
-      };
-      Axios.post("http://localhost:3000/api/auth/signup", user)
-        .then((res) => {
-          if (res.status === 200) {
-            localStorage.setItem("userSignup", JSON.stringify(res.data));
-            console.log(res);
-            this.$router.push("/login");
-          }
-        })
-        .catch((err) => {
-          localStorage.clear();
-          if (err.response.status === 401) {
-            this.error =
-              "Connexion au serveur impossible.";
-          } else {
-            this.error = "Vérifiez vos identifiants. ";
-          }
-        });
+    name: 'SignupApp',
+    data() {
+        return {
+            inputSignup: {
+                pseudo: "",
+                email: "",
+                password: ""
+            }
+        }
     },
-  },
-};
+    methods: {
+        signup() {
+            let inputDatas = {
+                "pseudo": this.inputSignup.pseudo,
+                "email": this.inputSignup.email,
+                "password": this.inputSignup.password
+            }
+            console.log(inputDatas)
+            let url = "http://localhost:3000/api/auth/signup"
+            let options = {
+                method: "POST",
+                body: JSON.stringify(inputDatas),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+            console.log(options)
+            fetch(url, options)
+                .then(res => res.json())
+                .then((res) => {
+                    /*if (res.userId && res.token){*/
+                    localStorage.setItem("userId", res.userId);
+                    localStorage.setItem("token", res.token);
+                    this.$router.push("/login");
+                    alert("Bienvenue sur le réseau social de Groupomania, vous pouvez dès à présent vous connecter.  ");
+                    /*} */
+                })
+                .catch(error => console.log(error))
+        }
+    }
+}
 </script>
 
-<style scoped>
-
-
-.input:hover {
-  outline: none !important;
-  border: solid 1px black1;
-  box-shadow: 0 0 10px #3b2cc2;
-}
-
-        label {
-            display: none;
-        }
-
+<style>
         * {
             margin: 0px;
             padding: 0px;
@@ -103,6 +103,15 @@ export default {
 
         a, button {
             cursor: pointer;
+            text-decoration: none;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        label {
+            display: none;
         }
 
         #logo {

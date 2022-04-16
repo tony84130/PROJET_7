@@ -45,3 +45,17 @@ exports.getLikePost = (req, res, next) => {
     res.status(200).json(docs);
   });
 };
+
+// Récupération des likes d'un utilisateur
+exports.getLikeUser = (req, res, next) => {
+  //const posterId = req.auth.userId;
+  const posterId = req.params.id;
+  const sql = `SELECT post_id FROM likes WHERE user_id = ${posterId};`;
+  db.query(sql, (err, docs) => {
+    if (err) {
+      res.status(404).json({ err });
+      throw err;
+    }
+    res.status(200).json(docs);
+  });
+};
