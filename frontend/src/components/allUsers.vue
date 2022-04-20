@@ -6,7 +6,9 @@
         <div id="suggestions">
 
             <div v-for="user in user" :key="user.id" id="user-suggestions">
-                <router-link :to="{ name: 'User-page', params:  {userId: user.id}}" title="Profil">
+                <router-link :to="{ name: 'User-page', params: {id: 1 }}" title="Profil"> 
+                
+                <!-- <router-link to="/test11" title="User-page"> -->
                 
 
                     <img v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
@@ -22,16 +24,8 @@
 </template>
 
 <script>
-//import CommentPost from '../components/CommentPost.vue'
-//import PreferButton from '../components/PreferButton.vue'
-//import BlocComment from '../components/BlocComment.vue'
 export default {
     name: "ListPost",
-    components: {
-        //CommentPost,
-        //PreferButton,
-        //BlocComment
-    },
     data() {
         return {
             user: {

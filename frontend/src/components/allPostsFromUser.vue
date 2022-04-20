@@ -3,13 +3,15 @@
     <div id="container-post" class="bloc">
 
      <!-- Liste des posts -->   
-      <div v-for="post in post" :key="post.id" id="post">
+        <div v-for="post in post" :key="post.id" id="post">
 
             <div id="first-line">
                 <div id="user-info">
                     <a href="">
-                        <img src="../assets/IDphoto.png" alt="photo user">
-                        <div>{{ post.posterId }}</div>
+                        <!-- <img src="../assets/IDphoto.png" alt="photo user"> -->
+                        <!-- <div>{{ post.posterId }}</div> -->
+                        <Pseudo :parentPost="post.posterId"/>
+
                     </a>
                 </div>
                 <button v-if="post.posterId" type="button" @click="deleteMessage(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
@@ -20,39 +22,29 @@
                 </a>
             </div>
             <div id="texte-post">{{ post.message }}</div>
-            <div id="second-line">
-                <div id="heart-count">
-                    <div><i class="fas fa-heart"></i></div>
-                    <div><i class="far fa-heart"></i></div>
-                    <a href="">
-                        <div>1 j'aime</div>
-                    </a>
-                </div>
-                <div><i class="fas fa-comment"></i></div>
-            </div>
-
-        <PreferButton :parentPost="post.id"/>
-        <CommentPost :parentPost="post.id"/>
-        <BlocComment :parentPost="post.id"/>
-       
-      </div>   
-      
-  </div>
+            
+            <Likes :parentPost="post.id"/>
+            <Comments :parentPost="post.id"/>
+            <AddComment :parentPost="post.id"/>
+        </div>   
+    </div>
 
   
 
 </template>
 
 <script>
-//import CommentPost from '../components/CommentPost.vue'
-//import PreferButton from '../components/PreferButton.vue'
-//import BlocComment from '../components/BlocComment.vue'
+import Pseudo from '../components/Pseudo.vue'
+import Likes from '../components/Likes.vue'
+import Comments from '../components/Comments.vue'
+import AddComment from '../components/AddComment.vue'
 export default {
     name: "ListPost",
     components: {
-        //CommentPost,
-        //PreferButton,
-        //BlocComment
+        Pseudo,
+        Likes,
+        Comments,
+        AddComment
     },
     data() {
         return {
@@ -63,8 +55,6 @@ export default {
             name: "",
             userId: "",
             content: "",
-            date:"%d/%m/%Y",
-            image_url: ""
         }
     }
 },
@@ -80,12 +70,7 @@ export default {
         fetch(url, options)
             .then((res) => {
                 res.json().then(data =>{
-            this.post=data;
-            this.post.image_url = "couou" + data[0].image_url;
-            for(var i=0; i < this.post.length;i++){
-                if(data[i].image_url != null)
-                this.post[i].image_url= "http://localhost:3000/" + data[i].image_url
-            }               
+            this.post=data;        
         })
         })
         .catch(error => console.log(error))
@@ -217,6 +202,7 @@ export default {
             flex-wrap: wrap;
             margin: 24px;
             height: min-content;
+            background-color: white;
         }
 
         #post:hover {
@@ -320,6 +306,28 @@ export default {
             padding: 5px;
         }
 
+        #add-comment {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            
+            border: 1px solid grey;
+        }
+
+        #add-comment input {
+            background-color: white;
+            width: 85%;
+            border: none;
+        }
+
+        #add-comment button {
+            padding: 5px;
+            background-color: #EFEFEF;
+            border: 1px solid grey;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
         
         @media screen and (max-width: 1050px) {
             #container {

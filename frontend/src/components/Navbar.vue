@@ -12,12 +12,14 @@
         <div id="nav-droite">
             <router-link to="/home" title="Home"><i class="fas fa-home"></i></router-link> 
             <router-link to="/liked" title="Liked"><i class="fas fa-heart"></i></router-link> 
-            <router-link to="/profil" title="Profil"><i class="fas fa-user"></i></router-link>
+            <!-- <router-link to="/profil" title="Profil"><i class="fas fa-user"></i></router-link> -->
+            <router-link to="/profil" title="Profil">
+                <div id="photo-profil-nav">
+                    <img v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
+                    <img v-else src="../assets/avatar.png" alt="photo user">
+                </div>
+            </router-link>
             <button @click="logoutSession" class="accountbutton"><i class="fas fa-power-off"></i></button> 
-            <div id="photo-profil-nav">
-                <img v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
-                <img v-else src="../assets/avatar.png" alt="photo user">
-            </div>
         </div>
     </nav>
 </template>

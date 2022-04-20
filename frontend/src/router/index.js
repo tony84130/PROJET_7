@@ -1,5 +1,6 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 //import Home from "../views/Home.vue";
+import store from '../store/index.js';
 
 
 const routes = [
@@ -46,34 +47,16 @@ const routes = [
       import("../views/Login.vue"),
   },
   {
-    path: "/test",
-    name: "Login-Post",
-    component: () =>
-      import("../components/allPosts.vue"),
-  },
-  {
     path: "/test1",
     name: "Login-Sugg",
     component: () =>
       import("../components/allUsers.vue"),
   },
   {
-    path: "/test2",
-    name: "Signup-page",
-    component: () =>
-      import("../views/Test-page2.vue"),
-  },
-  {
-    path: "/test3",
-    name: "Login-page3",
-    component: () =>
-      import("../views/Test-page3.vue"),
-  },
-  {
     path: "/test4",
     name: "Signup-page4",
     component: () =>
-      import("../views/Test-Post.vue"),
+      import("../views/allPosts.vue"),
   },
   {
     path: "/test5",
@@ -118,7 +101,7 @@ const routes = [
       import("../views/Liked-page.vue"),
   },
   {
-    path: "/test11",
+    path: `/test11/?id=:id`,
     name: "User-page",
     component: () =>
       import("../components/UserPage-TEST.vue"),
@@ -126,8 +109,14 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+	const isLogged = store.state.isLogged
+	if ((to.name !== 'login' && !isLogged) && (to.name !== 'signup' && !isLogged)) next({ name: 'login' })
+	else next()
+})
 
 export default router;

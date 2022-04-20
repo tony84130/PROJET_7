@@ -3,7 +3,6 @@
 
             <div class="bloc">
                 <h2>Bienvenu sur votre espace personnel {{userAccount.pseudo}} ! 🤓</h2>
-                <NavBar/> <br/>
             
                 
                 <div>
@@ -63,23 +62,7 @@ export default {
             })},
      
     methods: {
-        deleteAccount() {
-            let url = "http://localhost:3000/api/auth/10";
-            let options = {
-                method: "DELETE",
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
-                }
-            };
-            fetch(url, options)
-                .then((response) => {
-                    console.log(response);
-                    localStorage.clear();
-                    alert("Compte supprimé !");
-                })
-                .then(this.$router.push("/signup"))
-                .catch(error => console.log(error))
-        },
+        
         sendFile(){
             let formData = new FormData();
             formData.append('profil_image', this.file);

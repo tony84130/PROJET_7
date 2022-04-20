@@ -4,27 +4,34 @@
      <!-- Liste des posts -->   
       <div v-for="post in post" id="post" :key="post.id" class="bloclist">
 
-        <div id="first-line">
-            <div id="user-info">
+            <div id="first-line">
+                <div id="user-info">
+                    <a href="">
+                        <img src="../assets/IDphoto.png" alt="photo user">
+                        <div>{{ post.posterId }}</div>
+                    </a>
+                </div>
+                <button v-if="post.posterId" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
+            </div>
+            <div id="photo-post">
                 <a href="">
-                    <img src="../assets/IDphoto.png" alt="photo user">
-                    <div>{{ post.posterId }}</div>
+                    <img v-if="post.picture != null" :src="post.picture" :key="post.picture" alt="post user">
                 </a>
             </div>
-            <button v-if="post.posterId" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
-        </div>
-        <div id="photo-post">
-            <a href="">
-                <img v-if="post.picture != null" :src="post.picture" :key="post.picture" alt="post user">
-            </a>
-        </div>
-        <div id="texte-post">{{ post.message }}</div>
-            
-        <Likes :parentPost="post.id"/>
-        <Comments :parentPost="post.id"/>
-        <AddComment :parentPost="post.id"/>
+            <div id="texte-post">{{ post.message }}</div>
+            <div id="second-line">
+                <div id="heart-count">
+                    <div><i class="fas fa-heart"></i></div>
+                    <div><i class="far fa-heart"></i></div>
+                    <a href="">
+                        <div>1 j'aime</div>
+                    </a>
+                </div>
+                <div><i class="fas fa-comment"></i></div>
+            </div>
        
-      </div>    
+      </div>   
+      
   </div>
 
   
@@ -32,16 +39,9 @@
 </template>
 
 <script>
-import Likes from '../components/test-Likes.vue'
-import Comments from '../components/test-Comments.vue'
-import AddComment from '../components/test-AddComment.vue'
+
 export default {
     name: "ListPost",
-    components: {
-        Likes,
-        Comments,
-        AddComment
-    },
     data() {
         return {
             
@@ -52,7 +52,6 @@ export default {
             userId: "",
             content: "",
             date:"%d/%m/%Y",
-            image_url: ""
         }
     }
 },
@@ -68,12 +67,7 @@ export default {
         fetch(url, options)
             .then((res) => {
                 res.json().then(data =>{
-            this.post=data;
-            this.post.image_url = "couou" + data[0].image_url;
-            for(var i=0; i < this.post.length;i++){
-                if(data[i].image_url != null)
-                this.post[i].image_url= "http://localhost:3000/" + data[i].image_url
-            }               
+            this.post=data;   
         })
         })
         .catch(error => console.log(error))
@@ -125,12 +119,67 @@ export default {
             background-color: #EFEFEF;
         }
     
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 30px;
+            border: 1px solid grey;
+            position: fixed;
+            width: 100%;
+            z-index: 1;
+        }
+
+        h1 {
+            color: red;
+        }
+
+        nav #logo-groupomania {
+            display: none;
+        }
+
+        #search {
+            border: 1px solid grey;
+            background-color: #EFEFEF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            border-radius: 5px;
+            width: 300px;
+            height: 30px;
+        }
+
         input {
             background-color: #EFEFEF;
             border: none;
             width: 100%;
             height: 100%;
             padding: 5px 10px;
+        }
+
+        #nav-droite {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #nav-droite i {
+            margin: 10px;
+        }
+
+        #photo-profil-nav {
+            width: 20px;
+            height: 20px;
+            margin: 10px;
+        }
+
+        #photo-profil-nav img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 200px;
         }
 
         #container {
@@ -165,7 +214,7 @@ export default {
         #first-line {
             border: 1px solid grey;
             display: flex;
-            height: 60px;
+            height: 50px;
             align-items: center;
             padding: 5px 10px 5px 5px;
             position: relative;
@@ -176,14 +225,13 @@ export default {
         #user-info {
             display: flex;
             align-items: center;
+            
             height: 100%;
         }
 
         #user-info img {
             height: 100%;
             margin-right: 5px;
-            width: 40px;
-            object-fit: cover;
         }
 
         .accountbutton {
@@ -239,7 +287,7 @@ export default {
         #user-comment {
             display: flex;
             align-items: center;
-            
+            height: 50px;
             border: 1px solid grey;
             border-radius: 0px 5px 5px 0px;
             margin-right: 10px;
@@ -248,13 +296,11 @@ export default {
         }
 
         #user-comment img {
-            height: 50px;
-            width: 40px;
-            object-fit: cover;
+            height: 100%;
             margin-right: 5px;
         }
 
-        #text-comment {
+        #texte-comment {
             padding: 5px;
         }
 
@@ -279,6 +325,7 @@ export default {
             font-weight: bold;
             cursor: pointer;
         }
+
     
         @media screen and (max-width: 1300px) {
             #container-centraux {

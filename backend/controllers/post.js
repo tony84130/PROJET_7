@@ -5,7 +5,9 @@ const fs = require("fs");
 // Vérifier le tri des publications de la plus récente à la plus ancienne ??
 // Récupération de tous les posts
 exports.getAllPost = (req, res, next) => {
-    const sql = `SELECT * FROM posts ORDER BY posterId`;
+    //const sql ="SELECT posts.id, posterId, message, posts.picture, datePost, isAdmin FROM posts JOIN users ON (users.id = posts.posterId);";
+    //const sql = `SELECT * FROM posts ORDER BY posterId`;
+    const sql = `SELECT * FROM posts ORDER BY datePost DESC`;
 
     db.query(sql, (err, docs) => {
         if (err) {
@@ -36,7 +38,7 @@ exports.getUserPost = (req, res, next) => {
         if (err) res.status(404).json({err});
         if (!err) res.status(200).json(docs);
     })
-  };
+};
 
 
 // Création d'un post

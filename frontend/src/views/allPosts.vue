@@ -1,73 +1,70 @@
 <template>
-    <div id="container-centraux" class="bloc">
+<div id="container-centraux" class="bloc">
 
-     <!-- Liste des posts -->   
-      <div v-for="post in post" id="post" :key="post.id" class="bloclist">
+    <!-- Liste des posts -->   
+    <div v-for="post in post" id="post" :key="post.id" class="bloclist">
 
-            <div id="first-line">
-                <div id="user-info">
-                    <a href="">
-                        <img src="../assets/IDphoto.png" alt="photo user">
-                        <div>{{ post.posterId }}</div>
-                    </a>
-                </div>
-                <button v-if="post.posterId" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
-            </div>
-            <div id="photo-post">
+        <div id="first-line">
+            <div id="user-info">
                 <a href="">
-                    <img v-if="post.picture != null" :src="post.picture" :key="post.picture" alt="post user">
+                    <!-- <img src="../assets/IDphoto.png" alt="photo user"> -->
+                    <!-- <div>{{ post.posterId }}</div> -->
+                    <Pseudo :parentPost="post.posterId"/>
                 </a>
             </div>
-            <div id="texte-post">{{ post.message }}</div>
-            <div id="second-line">
-                <div id="heart-count">
-                    <div><i class="fas fa-heart"></i></div>
-                    <div><i class="far fa-heart"></i></div>
-                    <a href="">
-                        <div>1 j'aime</div>
-                    </a>
-                </div>
-                <div><i class="fas fa-comment"></i></div>
-            </div>
-
-        <PreferButton :parentPost="post.id"/>
-        <CommentPost :parentPost="post.id"/>
-        <BlocComment :parentPost="post.id"/>
+            <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
+        </div>
+        <div id="photo-post">
+            <a href="">
+                <img v-if="post.picture != null" :src="post.picture" :key="post.picture" alt="post user">
+            </a>
+        </div>
+        <div id="texte-post">{{ post.message }}</div>
+            
+        <Likes :parentPost="post.id"/>
+        <Comments :parentPost="post.id"/>
+        <AddComment :parentPost="post.id"/>
        
-      </div>   
-      
-  </div>
+    </div>    
+</div>
 
   
 
 </template>
 
 <script>
-//import CommentPost from '../components/CommentPost.vue'
-//import PreferButton from '../components/PreferButton.vue'
-//import BlocComment from '../components/BlocComment.vue'
+import Pseudo from '../components/Pseudo.vue'
+import Likes from '../components/Likes.vue'
+import Comments from '../components/Comments.vue'
+import AddComment from '../components/AddComment.vue'
+
 export default {
     name: "ListPost",
     components: {
-        //CommentPost,
-        //PreferButton,
-        //BlocComment
+        Pseudo,
+        Likes,
+        Comments,
+        AddComment
     },
     data() {
         return {
-            
             post: {
-            img:true,
-            surname: "",
-            name: "",
-            userId: "",
-            content: "",
-            date:"%d/%m/%Y",
-            image_url: ""
+                img:true,
+                surname: "",
+                name: "",
+                userId: "",
+                content: "",
+                posterId: "",
+            },
+            user: {
+                userId: "",
+                isAdmin: "",
+                id: "",
+                pseudo: ""
+            }
         }
-    }
-},
-    mounted() {
+    },
+    beforeCreate() {
         this.userId = JSON.parse(localStorage.getItem("userId"));
         let url = "http://localhost:3000/api/post";
         let options = {
@@ -79,16 +76,34 @@ export default {
         fetch(url, options)
             .then((res) => {
                 res.json().then(data =>{
-            this.post=data;
-            this.post.image_url = "couou" + data[0].image_url;
-            for(var i=0; i < this.post.length;i++){
-                if(data[i].image_url != null)
-                this.post[i].image_url= "http://localhost:3000/" + data[i].image_url
-            }               
-        })
-        })
-        .catch(error => console.log(error))
+                    this.post=data;
+                    this.post.posterId = data[0].posterId;
+                    
+                })
+            })
+            .catch(error => console.log(error))
+    },  
+    mounted() {
+        this.userId = JSON.parse(localStorage.getItem("userId"));
+        let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
+        let optionsUser = {
+            method: "GET",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token"),
+            }
+        };
+        fetch(urlUser, optionsUser)
+            .then((res) => {
+                res.json().then(data =>{
+                    this.user = data[0];
+                    console.log("reponse :" + data)
+                })
+            })
+            .catch(error => console.log(error)) 
+
+
     },
+    
     methods: {
         
         deletePost(id_post) {
@@ -136,67 +151,12 @@ export default {
             background-color: #EFEFEF;
         }
     
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: white;
-            padding: 15px 30px;
-            border: 1px solid grey;
-            position: fixed;
-            width: 100%;
-            z-index: 1;
-        }
-
-        h1 {
-            color: red;
-        }
-
-        nav #logo-groupomania {
-            display: none;
-        }
-
-        #search {
-            border: 1px solid grey;
-            background-color: #EFEFEF;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 5px;
-            border-radius: 5px;
-            width: 300px;
-            height: 30px;
-        }
-
         input {
             background-color: #EFEFEF;
             border: none;
             width: 100%;
             height: 100%;
             padding: 5px 10px;
-        }
-
-        #nav-droite {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #nav-droite i {
-            margin: 10px;
-        }
-
-        #photo-profil-nav {
-            width: 20px;
-            height: 20px;
-            margin: 10px;
-        }
-
-        #photo-profil-nav img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 200px;
         }
 
         #container {
@@ -231,7 +191,7 @@ export default {
         #first-line {
             border: 1px solid grey;
             display: flex;
-            height: 50px;
+            height: 60px;
             align-items: center;
             padding: 5px 10px 5px 5px;
             position: relative;
@@ -242,13 +202,14 @@ export default {
         #user-info {
             display: flex;
             align-items: center;
-            
             height: 100%;
         }
 
         #user-info img {
             height: 100%;
             margin-right: 5px;
+            width: 40px;
+            object-fit: cover;
         }
 
         .accountbutton {
@@ -304,7 +265,7 @@ export default {
         #user-comment {
             display: flex;
             align-items: center;
-            height: 50px;
+            justify-content: space-between;
             border: 1px solid grey;
             border-radius: 0px 5px 5px 0px;
             margin-right: 10px;
@@ -313,11 +274,13 @@ export default {
         }
 
         #user-comment img {
-            height: 100%;
+            height: 50px;
+            width: 40px;
+            object-fit: cover;
             margin-right: 5px;
         }
 
-        #texte-comment {
+        #text-comment {
             padding: 5px;
         }
 
@@ -342,7 +305,6 @@ export default {
             font-weight: bold;
             cursor: pointer;
         }
-
     
         @media screen and (max-width: 1300px) {
             #container-centraux {

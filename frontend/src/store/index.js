@@ -1,3 +1,4 @@
+/*
 import { createStore } from "vuex";
 
 export default createStore({
@@ -8,3 +9,18 @@ export default createStore({
   actions: {},
   modules: {},
 });
+*/
+
+import { createStore } from 'vuex'
+
+export default createStore({
+  state: {
+    isLogged: localStorage.getItem('token'),
+  },
+  mutations: {
+  },
+  actions: {
+  },
+  modules: {
+  }
+})

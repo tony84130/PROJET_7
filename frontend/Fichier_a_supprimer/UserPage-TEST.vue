@@ -32,11 +32,11 @@
 
 
 <script>
-let idPage = function getId() {
-    return new URLSearchParams(window.location.search).get("id");
+function getId() {
+    return  new URLSearchParams(window.location.search).get("id");
 }
-console.log(idPage());
 
+console.log(getId());
 export default {
     name: "List-user",
     components: {
@@ -57,7 +57,7 @@ export default {
 },
     mounted() {
         this.userId = JSON.parse(localStorage.getItem("userId"));
-        let url = `http://localhost:3000/api/auth/${idPage()}`;
+        let url = `http://localhost:3000/api/auth/29`;
         let options = {
             method: "GET",
             headers: {

@@ -4,29 +4,9 @@
      <!-- Liste des posts -->   
       <div v-for="post in post" id="post" :key="post.id" class="bloclist">
 
-            <div id="first-line">
-                <div id="user-info">
-                    <a href="">
-                        <img src="../assets/IDphoto.png" alt="photo user">
-                        <div>{{ post.user_id }}</div>
-                        <div> -:- </div>
-                        <div>{{ post.post_id }}</div>
-                        <Pseudo :parentPost="post.user_id"/>
+        <div>{{ post.user_id }} : {{ post.post_id }}</div>
 
-                    </a>
-                </div>
-                <button v-if="post.posterId" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
-            </div>
-            <div id="photo-post">
-                <a href="">
-                    <img v-if="post.picture != null" :src="post.picture" :key="post.picture" alt="post user">
-                </a>
-            </div>
-            <div id="texte-post">{{ post.message }}</div>
-            
-            <Likes :parentPost="post.post_id"/>
-            <Comments :parentPost="post.post_id"/>
-            <AddComment :parentPost="post.post_id"/>
+        <!-- <Pseudo :parentPost="post.user_id"/> -->
 
       </div>   
   </div>
@@ -36,17 +16,12 @@
 </template>
 
 <script>
-import Pseudo from '../components/Pseudo.vue'
-import Likes from '../components/Likes.vue'
-import Comments from '../components/Comments.vue'
-import AddComment from '../components/AddComment.vue'
+//import Pseudo from '../components/test-Pseudo.vue'
 export default {
     name: "ListPost",
     components: {
-        Pseudo,
-        Likes,
-        Comments,
-        AddComment
+        //Pseudo,
+        Post,
     },
     data() {
         return {
@@ -69,29 +44,12 @@ export default {
             .then((res) => {
                 res.json().then(data =>{
                     this.post=data;
+                    this.post.pseudo = data[0].user_id;
+                    this.post.pseudo = data[0].post_id;
                     console.log(data)         
                 })
             })
             .catch(error => console.log(error))
-    },
-    methods: {
-        
-        deletePost(id_post) {
-            this.userId = JSON.parse(localStorage.getItem("userId"));
-            let url = "http://localhost:3000/api/post/" + id_post;
-            let options = {
-                method: "DELETE",
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
-                }
-            };
-            fetch(url, options)
-                .then((response) => {
-                    console.log(response);
-                    window.location.reload();
-                })
-                .catch(error => console.log(error))
-        },
     },
 }
 </script>

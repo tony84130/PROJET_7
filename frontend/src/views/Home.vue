@@ -17,7 +17,8 @@
 import Nav from "@/components/Navbar.vue";
 import Sugg from "@/components/allUsers.vue";
 import Add from "@/components/addPost.vue";
-import Post from "@/components/allPosts.vue";
+//import Post from "@/components/allPosts.vue";
+import Post from "@/views/allPosts.vue";
 
 export default {
   name: "Home-page",

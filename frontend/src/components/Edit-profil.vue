@@ -31,14 +31,28 @@
                 <input v-model="user.bio" type="text">
             </div>
         </div>
+
+                <div>
+                    <label for="picture">Photo de profil:</label>
+                    <input id="picture" type="file" name="photo_profil" @change="handleFileUpload($event)" required/>
+                </div>
+                <div>
+                  <button v-on:click="sendFile()">Publier la photo</button>
+                </div>
+
+            <form @submit.prevent="editProfile">
+                <label for="bio">Changer de bio :</label>
+                <input type="text" name="bio" v-model="updateUser.bio">
+                <input type="submit" value="modifier" @click.prevent="modifyProfile">
+            </form>
+
     </div>
 
 </template>
 
 <script>
-//import CommentPost from '../components/CommentPost.vue'
-//import PreferButton from '../components/PreferButton.vue'
-//import BlocComment from '../components/BlocComment.vue'
+const axios = require('axios').default;
+
 export default {
     name: "List-user",
     components: {
@@ -50,13 +64,19 @@ export default {
         return {
             
             user: {
-            img:true,
-            pseudo: "",
-            userId: "",
-            picture: ""
+                img:true,
+                pseudo: "",
+                userId: "",
+                picture: "",
+                bio: ""
+            },
+            updateUser: {
+                bio: "",
+            },
+            file: '',
+            errMsg: null
         }
-    }
-},
+    },
     mounted() {
         this.userId = JSON.parse(localStorage.getItem("userId"));
         let url = "http://localhost:3000/api/auth/29";
@@ -79,6 +99,24 @@ export default {
     },
     methods: {
         
+        modifyProfile() {            
+            let formData = new FormData()
+            formData.append('bio', this.updateUser.bio)      
+
+            /* on envoie notre requête */
+            if (confirm("êtes vous sûr de vouloir modifier votre profil ?")) {
+                axios.put(`http://localhost:3000/api/user/profil/${localStorage.getItem('userId')}`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+                    //.then(location.reload())
+                    .catch(error => {error})
+            } else {
+                location.reload()
+            }
+        }
+
     },
 }
 </script>

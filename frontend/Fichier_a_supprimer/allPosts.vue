@@ -29,22 +29,6 @@
                 </div>
                 <div><i class="fas fa-comment"></i></div>
             </div>
-            <div id="comment">
-                <div id="user-comment">
-                
-                    <img src="../assets/avatar.png" alt="photo user">
-                    <div>USER : Tony</div>
-                </div>
-                <div id="text-comment">Mon premier commentaire</div>
-            </div>
-            <div id="add-comment">
-                <input type="text" placeholder="votre texte ici ...">
-                <button>Envoyer</button>
-            </div>
-
-        <PreferButton :parentPost="post.id"/>
-        <CommentPost :parentPost="post.id"/>
-        <BlocComment :parentPost="post.id"/>
        
       </div>   
       
@@ -55,16 +39,9 @@
 </template>
 
 <script>
-//import CommentPost from '../components/CommentPost.vue'
-//import PreferButton from '../components/PreferButton.vue'
-//import BlocComment from '../components/BlocComment.vue'
+
 export default {
     name: "ListPost",
-    components: {
-        //CommentPost,
-        //PreferButton,
-        //BlocComment
-    },
     data() {
         return {
             
@@ -75,7 +52,6 @@ export default {
             userId: "",
             content: "",
             date:"%d/%m/%Y",
-            image_url: ""
         }
     }
 },
@@ -91,12 +67,7 @@ export default {
         fetch(url, options)
             .then((res) => {
                 res.json().then(data =>{
-            this.post=data;
-            this.post.image_url = "couou" + data[0].image_url;
-            for(var i=0; i < this.post.length;i++){
-                if(data[i].image_url != null)
-                this.post[i].image_url= "http://localhost:3000/" + data[i].image_url
-            }               
+            this.post=data;   
         })
         })
         .catch(error => console.log(error))
@@ -148,12 +119,67 @@ export default {
             background-color: #EFEFEF;
         }
     
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 30px;
+            border: 1px solid grey;
+            position: fixed;
+            width: 100%;
+            z-index: 1;
+        }
+
+        h1 {
+            color: red;
+        }
+
+        nav #logo-groupomania {
+            display: none;
+        }
+
+        #search {
+            border: 1px solid grey;
+            background-color: #EFEFEF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            border-radius: 5px;
+            width: 300px;
+            height: 30px;
+        }
+
         input {
             background-color: #EFEFEF;
             border: none;
             width: 100%;
             height: 100%;
             padding: 5px 10px;
+        }
+
+        #nav-droite {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #nav-droite i {
+            margin: 10px;
+        }
+
+        #photo-profil-nav {
+            width: 20px;
+            height: 20px;
+            margin: 10px;
+        }
+
+        #photo-profil-nav img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 200px;
         }
 
         #container {
@@ -199,14 +225,13 @@ export default {
         #user-info {
             display: flex;
             align-items: center;
+            
             height: 100%;
         }
 
         #user-info img {
             height: 100%;
             margin-right: 5px;
-            width: 50px;
-            object-fit: cover;
         }
 
         .accountbutton {
@@ -275,7 +300,7 @@ export default {
             margin-right: 5px;
         }
 
-        #text-comment {
+        #texte-comment {
             padding: 5px;
         }
 
@@ -300,6 +325,7 @@ export default {
             font-weight: bold;
             cursor: pointer;
         }
+
     
         @media screen and (max-width: 1300px) {
             #container-centraux {

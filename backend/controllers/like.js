@@ -35,6 +35,7 @@ exports.likePost = (req, res, next) => {
 
 // Récupération des likes d'un post
 exports.getLikePost = (req, res, next) => {
+  //const postId = req.body.id;
   const postId = req.params.id;
   const sql = `SELECT user_id FROM likes WHERE post_id = ${postId};`;
   db.query(sql, (err, docs) => {
@@ -46,11 +47,11 @@ exports.getLikePost = (req, res, next) => {
   });
 };
 
-// Récupération des likes d'un utilisateur
-exports.getLikeUser = (req, res, next) => {
-  //const posterId = req.auth.userId;
-  const posterId = req.params.id;
-  const sql = `SELECT post_id FROM likes WHERE user_id = ${posterId};`;
+// Récupération du nombre de like d'un post
+exports.getCountLikePost = (req, res, next) => {
+  //const postId = req.body.id;
+  const postId = req.params.id;
+  const sql = `SELECT COUNT(*) FROM likes WHERE post_id = ${postId};`;
   db.query(sql, (err, docs) => {
     if (err) {
       res.status(404).json({ err });
@@ -59,3 +60,52 @@ exports.getLikeUser = (req, res, next) => {
     res.status(200).json(docs);
   });
 };
+
+
+// Récupération des likes d'un utilisateur
+exports.getLikeUser = (req, res, next) => {
+  //const posterId = req.auth.userId;
+  const posterId = req.params.id;
+  const sql = `SELECT post_id, user_id FROM likes WHERE user_id = ${posterId};`;
+  db.query(sql, (err, docs) => {
+    if (err) {
+      res.status(404).json({ err });
+      throw err;
+    }
+    res.status(200).json(docs);
+  });
+};
+
+/*
+// Récupération des likes d'un utilisateur
+exports.getLikeUser = (req, res, next) => {
+  //const posterId = req.auth.userId;
+  const posterId = req.params.id;
+  const sql = `SELECT id, post_id, user_id FROM likes WHERE user_id = ${posterId};`;
+  const sql1 = 'SELECT * FROM posts WHERE posts.id= ?';
+  let post = [];
+  db.query(sql, (err, docs) => {
+    if (err) {
+      res.status(404).json({ err });
+      throw err;
+    }
+    for (let pas = 0; pas < docs.length; pas++) {
+      db.query(sql1, post, (err, docs) => {
+        post = docs[pas].post_id;
+        //console.log(pas)
+        console.log(docs)
+        post += docs[pas].post_id;
+
+    })
+    }
+    if (err) res.status(404).json({err});
+    if (!err) res.status(200).json(docs);
+    
+    
+    
+  });
+};
+*/
+    
+
+    
