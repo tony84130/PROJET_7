@@ -19,7 +19,7 @@
                     <img v-else src="../assets/avatar.png" alt="photo user">
                 </div>
             </router-link>
-            <button @click="logoutSession" class="accountbutton"><i class="fas fa-power-off"></i></button> 
+            <button @click="logoutSession" id="iconOff" class="accountbutton"><i class="fas fa-power-off"></i></button> 
         </div>
     </nav>
 </template>
@@ -147,6 +147,11 @@ export default {
         .accountbutton {
             background-color: transparent;
             display: flex;
+        }
+
+        #iconOff i {
+            position: relative;
+            top: 2px;
         }
 
         nav #photo-profil-nav {

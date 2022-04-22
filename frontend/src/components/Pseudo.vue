@@ -3,7 +3,7 @@
     <img v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
     <img v-else src="../assets/avatar.png" alt="photo user">
 
-    <div :key="user.id">{{ user.pseudo }}</div>
+    <div id="postPseudo" :key="user.id">{{ user.pseudo }}</div>
 </template>
 
 <script>

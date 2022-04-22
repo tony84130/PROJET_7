@@ -5,7 +5,7 @@
         <h2>suggestions</h2>
         <div id="suggestions">
 
-            <div v-for="user in user" :key="user.id" id="user-suggestions">
+            <div v-for="user in users" :key="user.id" id="user-suggestions">
                 <router-link :to="{ name: 'User-page', params: {id: 1 }}" title="Profil"> 
                 
                 <!-- <router-link to="/test11" title="User-page"> -->
@@ -25,15 +25,13 @@
 
 <script>
 export default {
-    name: "ListPost",
+    name: "ListUser",
     data() {
         return {
-            user: {
+            users: {
                 img:true,
                 pseudo: "",
                 userId: "",
-                content: "",
-                date:"%d/%m/%Y",
                 picture: "",
                 id: "" 
             }   
@@ -51,8 +49,8 @@ export default {
         fetch(url, options)
             .then((res) => {
                 res.json().then(data =>{
-                    this.user=data; 
-                    this.user.id=data.id;
+                    this.users=data; 
+                    this.users.id=data.id;
                 })
             })
             .catch(error => console.log(error)) 

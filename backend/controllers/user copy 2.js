@@ -21,45 +21,27 @@ const creatToken = (id) => {
 // Vérifier pour le pseudo déjà existant ?? Celui dans les commentaires ??
 // Création d'un compte utilisateur
 exports.signUp = (req, res, next) => {
-  try {
-    console.log(req.body);
-    const password = req.body.password;
-    const email = req.body.email;
-    const pseudo = req.body.pseudo;
-    //const sql = `SELECT email, pseudo FROM users WHERE email=? OR pseudo=?`;
-    const sql = `SELECT email FROM users WHERE email=?`;
-    const sqlPseudo = `SELECT pseudo FROM users WHERE pseudo=?`;
-    //let query = db.query(sql, email, pseudo, async (err, docs) => {
+  console.log(req.body);
+  const password = req.body.password;
+  const email = req.body.email;
+  const pseudo = req.body.pseudo;
+  //const sql = `SELECT email, pseudo FROM users WHERE email=? OR pseudo=?`;
+  const sql = `SELECT email FROM users WHERE email=?`;
+  const sqlPseudo = `SELECT pseudo FROM users WHERE pseudo=?`;
+  //let query = db.query(sql, email, pseudo, async (err, docs) => {
+
+
+  let query2 = db.query(sqlPseudo, pseudo, async (err, docs) => {
+    console.log("erreur ici :" + docs)
+    if (err) throw err;
+
     if (!email || !password || !pseudo ) {
       return res.status(400).json({ error: "Veuillez remplir toutes les informations demandées !" });
     }
-
-    let query = db.query(sql, email, async (err, docs) => {
-      console.log("erreur ici :" + docs);
-      let result = false;
-      if (err) throw err;
-      if (docs.length >= 1) {
-        result =  true;
-      }
-      return result;
-    });
-    console.log(query);
-    if(query) { return res.status(400).json({ error: "Utilisateur déja existant !" })}
-    console.log("Email valide");
-
-    let queryPseudo = db.query(sqlPseudo, pseudo, async (err, docs1) => {
-      console.log("erreur ici :" + docs);
-      let result = false;
-      if (err) throw err;
-      if (docs.length >= 1) {
-        result =  true;
-      }
-      return result;
-    });
-    console.log(query);
-    if(query) { return res.status(400).json({ error: "Pseudo déja existant !" })}
-    console.log("Pseudo valide");
-
+    if (docs.length >= 1) {
+      return res.status(400).json({ error: "Pseudo déja existant !" });
+    }
+    
     if (password.length <= 8) {
       return res.status(400).json({
         message: "Le mot de passe doit être de 6 caractéres minimum!",
@@ -84,9 +66,55 @@ exports.signUp = (req, res, next) => {
         })
         .catch((error) => res.status(500).json({ error }));
     }
-  } catch (error) {
-    res.status(500).json({ error });
-  }
+  });
+
+  let query = db.query(sql, email, async (err, docs) => {
+    console.log("erreur ici :" + docs)
+    if (err) throw err;
+
+    if (!email || !password || !pseudo ) {
+      return res.status(400).json({ error: "Veuillez remplir toutes les informations demandées !" });
+    }
+    if (docs.length >= 1) {
+      return res.status(400).json({ error: "Utilisateur déja existant !" });
+    }
+    
+    /*
+    let query = db.query(sqlPseudo, pseudo, async (err, docs) => {
+      if (err) throw err;
+      if (docs.length >= 1) {
+        return res.status(400).json({ error: "Pseudo déja existant !" });
+      }
+    });
+    */
+    
+    if (password.length <= 8) {
+      return res.status(400).json({
+        message: "Le mot de passe doit être de 6 caractéres minimum!",
+      });
+    }
+    else {
+      bcrypt
+        .hash(req.body.password, 10)
+        .then((hash) => {
+          const newUser = {
+            pseudo: req.body.pseudo,
+            email: req.body.email,
+            password: hash,
+            //isAdmin: req.body.isAdmin,
+          };
+          let sql = "INSERT INTO users SET ?";
+          let query = db.query(sql, newUser, (err, docs) => {
+            if (err) throw err;
+            console.log(docs);
+            res.status(201).json({ message: "Utilisateur créé!" });
+          });
+        })
+        .catch((error) => res.status(500).json({ error }));
+    }
+  });
+
+  
 };
 
 // Passer le pseudo à l'utilisateur connecté ??

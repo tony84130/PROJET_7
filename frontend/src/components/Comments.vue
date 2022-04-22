@@ -5,7 +5,7 @@
         <div id="user-comment">
                 
             <img src="../assets/avatar.png" alt="photo user">
-            <div>{{ comment.pseudo }}</div>
+            <div id="commentPseudo">{{ comment.pseudo }}</div>
             <!-- <Pseudo :parentPost="comment.user_id"/> -->
         </div>
         <div id="text-comment">{{ comment.text }}</div>

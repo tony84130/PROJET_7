@@ -14,7 +14,8 @@
 
                     </a>
                 </div>
-                <button v-if="post.posterId" type="button" @click="deleteMessage(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
+                <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button>
+                <button v-if="post.posterId" type="button" @click="deleteMessage(post.id)" id="trash" class="accountbutton"><i class="fas fa-trash"></i></button>
             </div>
             <div id="photo-post" v-if="post.picture != null">
                 <a href="">
@@ -162,7 +163,6 @@ export default {
             display: flex;
             justify-content: center;
             margin: 10px 0px 40px 0px;
-            cursor: pointer;
             text-align: center;
         }
 
@@ -232,6 +232,18 @@ export default {
             margin-right: 5px;
         }
 
+        #modifPost {
+            position: absolute;
+            right: 35px;
+            display: flex;
+            align-items: center;
+        }
+
+        #modifPost i {
+            position: relative;
+            top: 1px;
+        }
+
         .accountbutton {
             border: none;
         }
@@ -239,6 +251,11 @@ export default {
         #trash {
             position: absolute;
             right: 15px;
+        }
+
+        #trash i {
+            position: relative;
+            top: 1px;
         }
 
         #photo-post {
@@ -250,7 +267,7 @@ export default {
         #photo-post img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         #texte-post {
@@ -275,11 +292,6 @@ export default {
             margin-right: 5px;
         }
 
-        #heart-count .fas {
-            display: none;
-            color: red;
-        }
-
         #comment {
             border: 1px solid grey;
             display: flex;
@@ -292,7 +304,9 @@ export default {
             align-items: center;
             height: 50px;
             border: 1px solid grey;
+            border-radius: 0px 5px 5px 0px;
             margin-right: 10px;
+            margin-bottom: 5px;
             padding-right: 5px;
             font-weight: bold;
         }
@@ -328,6 +342,27 @@ export default {
             font-weight: bold;
             cursor: pointer;
         }
+
+        #zeroLike {
+            display: none;
+        }
+
+        #zeroLikeSmall {
+            display: block;
+        }
+
+        #comment {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 10px;
+            position: relative;
+        }
+
+        #commentPseudo {
+            width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         
         @media screen and (max-width: 1050px) {
             #container {
@@ -345,6 +380,14 @@ export default {
             #post {
                 width: 370px;
             }
+
+            #postPseudo {
+                width: 200px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            
             
         }
 
@@ -355,7 +398,7 @@ export default {
             }
 
             #container-secondaire {
-                width: 400px;
+                width: 500px;
             }
 
             #container-post {
@@ -365,6 +408,11 @@ export default {
             #post {
                 width: 300px;
             }
+
+            #postPseudo {
+                width: 180px;
+            }
+            
 
         }
 
@@ -390,6 +438,14 @@ export default {
                 width: 450px;
             }
 
+            #photo-post img {
+                height: 300px;
+            }
+
+            #postPseudo {
+                width: 220px;
+            }
+
         }
 
 
@@ -412,6 +468,10 @@ export default {
                 width: 400px;
             }
 
+            #photo-post img {
+                height: 250px;
+            }
+
         }
 
         @media screen and (max-width: 400px) {
@@ -421,6 +481,14 @@ export default {
 
             #post {
                 width: 300px;
+            }
+
+            #photo-post img {
+                height: 200px;
+            }
+
+            #postPseudo {
+                width: 130px;
             }
 
         }

@@ -2,10 +2,12 @@
 <template>
     <div  :key="like.id" id="second-line">
         <div id="heart-count">
-            <div><i class="fas fa-heart"></i></div>
-            <div @click="addLike"><i class="far fa-heart"></i></div>
+            <div @click="addLike" v-if="like.length == 0 || like.length == undefined"><i class="far fa-heart"></i></div>
+            <div @click="addLike" v-else><i class="fas fa-heart"></i></div>
+            
             <a href="">
-                <div v-if="like.length == 0 || like.length == undefined">Soyez le premier à aimer ce post !</div>
+                <div id="zeroLike" v-if="like.length == 0 || like.length == undefined">Soyez le premier à aimer ce post !</div>
+                <div id="zeroLikeSmall" v-if="like.length == 0 || like.length == undefined">0 j'aime</div>
                 <div v-else>{{ like.length }} j'aime</div>
             </a>
         </div>

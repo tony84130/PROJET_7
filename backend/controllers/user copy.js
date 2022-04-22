@@ -38,27 +38,23 @@ exports.signUp = (req, res, next) => {
       console.log("erreur ici :" + docs);
       let result = false;
       if (err) throw err;
+      console.log("ici dan email")
+      console.log("valuer de docs", typeof docs.length);
       if (docs.length >= 1) {
+        console.log("lalalala")
         result =  true;
       }
       return result;
     });
     console.log(query);
     if(query) { return res.status(400).json({ error: "Utilisateur déja existant !" })}
-    console.log("Email valide");
-
+    console.log("email valide");
     let queryPseudo = db.query(sqlPseudo, pseudo, async (err, docs1) => {
-      console.log("erreur ici :" + docs);
-      let result = false;
-      if (err) throw err;
-      if (docs.length >= 1) {
-        result =  true;
+      if (err) console.log(err);
+      if (docs1.length >= 1) {
+        return res.status(400).json({ error: "Pseudo déja existant !" });
       }
-      return result;
     });
-    console.log(query);
-    if(query) { return res.status(400).json({ error: "Pseudo déja existant !" })}
-    console.log("Pseudo valide");
 
     if (password.length <= 8) {
       return res.status(400).json({

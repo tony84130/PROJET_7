@@ -86,7 +86,7 @@ const routes = [
     path: "/test9",
     name: "Signup-page9",
     component: () =>
-      import("../views/Test-addPost.vue"),
+      import("../views/Test-modifPost.vue"),
   },
   {
     path: "/test10",
@@ -101,7 +101,7 @@ const routes = [
       import("../views/Liked-page.vue"),
   },
   {
-    path: `/test11/?id=:id`,
+    path: `/test11/:id`,
     name: "User-page",
     component: () =>
       import("../components/UserPage-TEST.vue"),

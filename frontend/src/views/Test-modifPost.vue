@@ -1,19 +1,21 @@
+
 <template>
+
 <div id="container-centraux" class="bloc">
 
-    <!-- Liste des posts -->   
-    <div v-for="post in post" id="post" :key="post.id" class="bloclist">
+    
+    <div id="post" :key="post.id" class="bloclist">
 
         <div id="first-line">
             <div id="user-info">
                 <a href="">
                     <!-- <img src="../assets/IDphoto.png" alt="photo user"> -->
                     <!-- <div>{{ post.posterId }}</div> -->
-                    <Pseudo :parentPost="post.posterId"/>
+                    <div>PSEUDO</div>
                 </a>
             </div>
-            <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button>
-            <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
+            <button type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button>
+            <button type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
         </div>
         <div id="photo-post">
             <a href="">
@@ -21,53 +23,56 @@
             </a>
         </div>
         <div v-if="post.message != 'null'" id="texte-post">{{ post.message }}</div>
-            
-        <Likes :parentPost="post.id"/>
-        <Comments :parentPost="post.id"/>
-        <AddComment :parentPost="post.id"/>
+    
        
     </div>    
 </div>
 
-  
+    <form id="modif-post" @submit.prevent="modifPost">
+        <div id="fileUser">
+            <div id="preview" v-if="preview">
+                <img :src="preview" :alt="preview">
+            </div>         
+            <div id="btns">                
+                <input type="file" ref="file" name="file" class="upload" id="file" @change="selectFile">             
+            </div>
+        </div>
+
+        <div id="modif">
+            <input v-if="post.message != null" type="text" name="textarea" v-model="post.message">
+            <input v-else type="text" name="textarea" placeholder="votre texte ici ..." >             
+        </div>
+        <button type="submit">Envoyer</button>
+
+        <p>{{ errMsg }}</p>
+    </form>
 
 </template>
 
-<script>
-import Pseudo from '../components/Pseudo.vue'
-import Likes from '../components/Likes.vue'
-import Comments from '../components/Comments.vue'
-import AddComment from '../components/AddComment.vue'
 
+<script>
+
+import axios from 'axios';
 export default {
-    name: "ListPost",
-    components: {
-        Pseudo,
-        Likes,
-        Comments,
-        AddComment
-    },
+    name: 'ModifPost',
     data() {
         return {
+            message: null,
+            file: '',
+            preview: null,
+            errMsg: null,
             post: {
                 img:true,
-                surname: "",
-                name: "",
+                message: "",
                 userId: "",
-                content: "",
+                picture: "",
                 posterId: "",
-            },
-            user: {
-                userId: "",
-                isAdmin: "",
-                id: "",
-                pseudo: ""
             }
         }
     },
     beforeCreate() {
         this.userId = JSON.parse(localStorage.getItem("userId"));
-        let url = "http://localhost:3000/api/post";
+        let url = "http://localhost:3000/api/post/7";
         let options = {
             method: "GET",
             headers: {
@@ -79,55 +84,171 @@ export default {
                 res.json().then(data =>{
                     this.post=data;
                     this.post.posterId = data[0].posterId;
-                    
+                    this.post.message = data[0].message;
+                    this.post.picture = data[0].picture;
                 })
             })
             .catch(error => console.log(error))
     },  
-    mounted() {
-        this.userId = JSON.parse(localStorage.getItem("userId"));
-        let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
-        let optionsUser = {
-            method: "GET",
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem("token"),
-            }
-        };
-        fetch(urlUser, optionsUser)
-            .then((res) => {
-                res.json().then(data =>{
-                    this.user = data[0];
-                    console.log("reponse :" + data)
-                })
-            })
-            .catch(error => console.log(error)) 
-
-
-    },
-    
     methods: {
-        
-        deletePost(id_post) {
-            this.userId = JSON.parse(localStorage.getItem("userId"));
-            let url = "http://localhost:3000/api/post/" + id_post;
-            let options = {
-                method: "DELETE",
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        selectFile(event) {
+            /* sur le onchange on va attribuer cette valeur à file (nécessaire pour l'envoi au backend) */
+            this.file = this.$refs.file.files[0]
+            let input = event.target
+            if(input.files) {
+                let reader = new FileReader()
+                reader.onload = (e) => {
+                    this.preview = e.target.result
                 }
-            };
-            fetch(url, options)
-                .then((response) => {
-                    console.log(response);
-                    window.location.reload();
-                })
-                .catch(error => console.log(error))
+                reader.readAsDataURL(input.files[0])
+            }
         },
-    },
+        modifPost() {
+                
+            if (!this.message && !this.file) {
+                this.errMsg = "Vous devez remplir le champ texte ou importer une photo pour créer une nouvelle publication!"
+                return
+            }
+            
+            let formData = new FormData()
+            formData.append('message', this.message)
+            formData.append('image', this.file)
+            formData.append('userId', localStorage.getItem('userId'))
+            
+            axios.put('http://localhost:3000/api/post/7', formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                },
+            })  
+                .then(res => this.$emit('modif-Post', res.data), (window.location.reload()))
+                .catch(error => console.log(error))
+            
+            this.$emit('toggle-Create')
+            this.message = ''
+            this.file = ''
+            this.preview = ''
+            document.querySelector('form').reset()           
+        },
+        //modifPost() {
+            //let hidden3 = document.getElementById("modif")
+            //hidden3.style.display = "none";
+            //let flex = document.getElementById("supprConfirm")
+            //flex.style.display = "flex";
+        //}
+    }
 }
+
+
 </script>
 
-<style lang="scss">
+
+<style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        i, a {
+            cursor: pointer;
+            color: black;
+            text-decoration: none;
+        }
+
+        a {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        body {
+            background-color: #EFEFEF;
+        }
+
+        #add-post {
+            border: 2px solid grey;
+            background-color: white;
+            margin-bottom: 15px;
+        }
+
+        #titre-add-post {
+            padding: 10px;
+            font-weight: bold;
+            border: 1px solid grey;
+        }
+
+        input[type="text"] {
+            border: 1px solid grey;
+            padding: 10px 20px;
+            width: 100%;
+        }
+
+        #fichier-boutton {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            background-color: white;
+            border: 1px solid grey;
+        }
+
+        #add-post label {
+            display: none;
+        }
+
+        #add-post input {
+            background-color: white;
+            width: 100%;
+        }
+
+        #message {
+            
+        }
+
+        input[type="file"] {
+            
+        }
+
+        #preview {
+            border: 1px solid grey;
+            width: 100%;
+        }
+
+        #preview img {
+            width: 100%;
+            object-fit: contain;
+            max-height: 400px;
+        }
+
+        #btns {
+            display: flex;
+            border: 1px solid grey;
+            padding: 5px;
+        }
+
+        input[type="submit"] {
+            padding: 5px;
+            background-color: #EFEFEF;
+            border: 1px solid grey;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 5px;
+            background-color: #EFEFEF;
+            border: 1px solid grey;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #add-post p {
+            color: red;
+            padding: 0px 10px;
+        }
+         
 
         * {
             margin: 0px;
