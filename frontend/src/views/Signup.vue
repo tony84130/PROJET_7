@@ -1,15 +1,19 @@
 
 <template>
-    <div id="container">
+    <main id="container">
 
         <div id="container-centraux">
             <h1 id="logo">Groupomania</h1>
             <div>Inscrivez-vous pour voir les publications de vos amis.</div>
             <form v-on:submit.prevent="signup" id="creation-compte">
 
-                <label for="pseudo">Nom :</label>
-                <input type="text" id="pseudo" name="pseudo" class="form-control" placeholder="Pseudo" required 
-                pattern="^[^&amp;<>@&quot;()'!_$*€£`+=\/;?#]+$" v-model="inputSignup.pseudo"/>
+                <label for="prenom">Nom :</label>
+                <input type="text" id="prenom" name="prenom" class="form-control" placeholder="Prenom" required 
+                pattern="^[^&amp;<>@&quot;()'!_$*€£`+=\/;?#]+$" v-model="inputSignup.prenom"/>
+
+                <label for="nom">Nom :</label>
+                <input type="text" id="nom" name="nom" class="form-control" placeholder="Nom" required 
+                pattern="^[^&amp;<>@&quot;()'!_$*€£`+=\/;?#]+$" v-model="inputSignup.nom"/>
               
                 <label for="email">E-mail :</label>
                 <input type="email" id="email" name="email" class="form-control" placeholder="Email" required 
@@ -28,7 +32,7 @@
         <div id="connection-compte">
             <div>Vous avez un compte  ? <router-link to="/login" title="signup">Connectez-vous</router-link></div>
         </div>
-    </div>
+    </main>
 
     <footer>
         <div id="container-bas">
@@ -45,7 +49,8 @@ export default {
     data() {
         return {
             inputSignup: {
-                pseudo: "",
+                prenom: "",
+                nom: "",
                 email: "",
                 password: ""
             }
@@ -54,11 +59,12 @@ export default {
     methods: {
         signup() {
             let inputDatas = {
-                "pseudo": this.inputSignup.pseudo,
+                "prenom": this.inputSignup.prenom,
+                "nom": this.inputSignup.nom,
                 "email": this.inputSignup.email,
                 "password": this.inputSignup.password
             }
-            console.log(inputDatas)
+            //console.log(inputDatas)
             let url = "http://localhost:3000/api/auth/signup"
             let options = {
                 method: "POST",
@@ -67,7 +73,7 @@ export default {
                     'Content-Type': 'application/json'
                 }
             }
-            console.log(options)
+            //console.log(options)
             fetch(url, options)
                 .then(res => res.json())
                 .then((res) => {
@@ -75,7 +81,7 @@ export default {
                     localStorage.setItem("userId", res.userId);
                     localStorage.setItem("token", res.token);
                     this.$router.push("/login");
-                    alert("Bienvenue sur le réseau social de Groupomania, vous pouvez dès à présent vous connecter.  ");
+                    //alert("Bienvenue sur le réseau social de Groupomania, vous pouvez dès à présent vous connecter.  ");
                     /*} */
                 })
                 .catch(error => console.log(error))
@@ -84,7 +90,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
         * {
             margin: 0px;
             padding: 0px;
@@ -125,6 +131,7 @@ export default {
             flex-direction: column;
             justify-content: center;
             min-height: calc(100vh - 59px);
+            margin: auto;
         }
 
         #container-centraux {

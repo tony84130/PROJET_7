@@ -19,7 +19,7 @@
             </div>
             <div id="photo-post">
                 <a href="">
-                    <img v-if="post.picture != null" :src="post.picture" :key="post.picture" alt="post user">
+                    <img v-if="post.picturePost != null" :src="post.picturePost" :key="post.picturePost" alt="post user">
                 </a>
             </div>
             <div id="texte-post">{{ post.message }}</div>
@@ -69,7 +69,7 @@ export default {
             .then((res) => {
                 res.json().then(data =>{
                     this.post=data;
-                    console.log(data)         
+                    //console.log(data)         
                 })
             })
             .catch(error => console.log(error))

@@ -6,7 +6,7 @@
         <div id="container-user">
             <img id="photo-profil" v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
             <img id="photo-profil" v-else src="../assets/avatar.png" alt="photo user">
-            <div>{{ user.pseudo }}</div>
+            <div>{{ user.prenom }} {{ user.nom }}</div>
         </div>
     
         <div id="container-secondaire">
@@ -25,44 +25,49 @@
                 </div>
             </div>
             <div id="bio-user">
-                <div v-if="user.bio != null">{{ user.bio }}</div>
+                <div v-if="user.bio != null && user.bio.length >1 ">{{ user.bio }}</div>
             </div>
             
             <div @click="annuler" id="annuler"><button type="submit">Annuler</button></div>
 
-            <div id="modif">
+            <form id="modif" @submit.prevent="modifyBio">
                 <input v-if="user.bio != null" type="text" name="textarea" v-model="user.bio">
                 <input v-else type="text" name="textarea" placeholder="votre texte ici ..." >             
                 <button type="submit">Envoyer</button>
-            </div>
-            <div id="fileUser">
+            </form>
+            <form id="fileUser" @submit.prevent="modifyPost">
                 <div id="preview" v-if="preview">
                     <img :src="preview" :alt="preview">
                 </div>         
-                <div id="btns">                
-                    <input type="file" ref="file" name="file" class="upload" id="file" @change="selectFile">             
+                <div id="btns">   
+                    <!-- <label for="file">Choisir une nouvelle image</label> -->             
+                    <!-- <input type="file" ref="file" name="file" class="upload" id="file" @change="selectFile"> -->
+                    <input type="file" ref="file" name="file" class="upload" id="file" @change="updateFile">          
                     <!-- <input type="submit" value="Envoyer" class="btn"> -->
                     <button type="submit">Envoyer</button>
                 </div>
-            </div>
+            </form>
             <div id="supprConfirm">
                 <div>Êtes-vous sûr de vouloir supprimer ce compte ?</div>
                 <button type="submit" @click="deleteAccount">Confirmer</button>
             </div>
+
         </div>
     </div>
-
     
 </template>
 
 
 
 <script>
+/*
 function getId() {
     return  new URLSearchParams(window.location.search).get("id");
 }
-
 console.log(getId());
+*/
+
+import axios from 'axios';
 
 export default {
     name: "List-user",
@@ -73,15 +78,21 @@ export default {
     },
     data() {
         return {
+            preview: null,
+            file: "",
             user: {
-            img:true,
-            pseudo: "",
-            userId: "",
-            picture: "",
-            bio: ""
+                img:true,
+                prenom: "",
+                nom: "",
+                userId: "",
+                picture: "",
+                bio: "",
+                newFile: '',
+                preview: null,
+                file: "",
+            }
         }
-    }
-},
+    },
     mounted() {
         this.userId = JSON.parse(localStorage.getItem("userId"));
         let url = `http://localhost:3000/api/auth/${this.userId}`;
@@ -96,7 +107,8 @@ export default {
                 res.json().then(data =>{
             this.user=data;
             this.user.picture = data[0].picture;
-            this.user.pseudo = data[0].pseudo;
+            this.user.prenom = data[0].prenom;
+            this.user.nom = data[0].nom;
             this.user.bio = data[0].bio;        
         })
         })
@@ -104,6 +116,7 @@ export default {
     },
     methods: {
         deleteAccount() {
+            this.userId = JSON.parse(localStorage.getItem("userId"));
             let url = `http://localhost:3000/api/auth/${this.userId}`;
             let options = {
                 method: "DELETE",
@@ -167,6 +180,57 @@ export default {
             hidden4.style.display = "none";
             let block = document.getElementById("bio-user")
             block.style.display = "block";
+        },
+        modifyBio() {
+            this.userId = JSON.parse(localStorage.getItem("userId")); 
+            
+            /* on créé un objet formData afin de pouvoir ajouter le texte et surtout le file choisi */
+            let formData = new FormData()
+            formData.append('bio', this.user.bio)
+            
+            /* envoi du form via axios.put de l'objet formData */
+            axios.put(`http://localhost:3000/api/auth/${this.userId}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                },
+            })  
+                .then(res => this.$emit('modif-bio', res.data), (window.location.reload()))
+                .catch(error => console.log(error))
+        },
+        updateFile(event) {
+            /* sur le onchange on va attribuer cette valeur à file (nécessaire pour l'envoi au backend) */
+            this.file = this.$refs.file.files[0]
+            let input = event.target
+            if(input.files) {
+                let reader = new FileReader()
+                reader.onload = (e) => {
+                    this.preview = e.target.result
+                }
+                reader.readAsDataURL(input.files[0])
+            }
+
+        },
+        modifyPost() {
+            this.userId = JSON.parse(localStorage.getItem("userId")); 
+            
+            /* on créé un objet formData afin de pouvoir ajouter le texte et surtout le file choisi */
+            let formData = new FormData()
+            formData.append('profil_image', this.file)
+            
+            /* envoi du form via axios.put de l'objet formData */
+            if (confirm("êtes vous sûr de vouloir modifier votre photo ?")) {
+                axios.put(`http://localhost:3000/api/auth/profil/${this.userId}`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    },
+                })  
+                    .then(res => this.$emit('modif-picture', res.data), console.log("Photo modifié !") )
+                    //.then(window.location.reload())
+                    .catch(error => console.log(error))
+                
+            }
+            //window.location.reload()
+
         }
     },
 }
@@ -175,6 +239,9 @@ export default {
 
 
 <style>
+
+        
+
         * {
             margin: 0px;
             padding: 0px;
@@ -205,7 +272,7 @@ export default {
             padding-top: 100px;
         }
 
-        #container-user {
+        #container #container-user {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -213,7 +280,7 @@ export default {
             font-weight: bold;
         }
 
-        #photo-profil {
+        #container #photo-profil {
             width: 200px;
             height: 200px;
             margin-bottom: 10px;
@@ -222,21 +289,21 @@ export default {
             border: 2px solid grey;
         }
 
-        #container-secondaire {
+        #container #container-secondaire {
             margin: 20px;
             width: 700px;
             display: flex;
             flex-direction: column;
         }
 
-        #modif-and-delete-user {
+        #container #modif-and-delete-user {
             display: flex;
             justify-content: center;
             margin: 10px 0px 40px 0px;
             text-align: center;
         }
 
-        #modif-and-delete-user > div {
+        #container #modif-and-delete-user > div {
             display: flex;
             align-items: center;
             border: 1px solid grey;
@@ -248,7 +315,7 @@ export default {
             margin: 0px 10px;
         }
 
-        #modif-and-delete-user i {
+        #container #modif-and-delete-user i {
             margin-left: 10px;
         }
 
@@ -256,19 +323,19 @@ export default {
             cursor: pointer;
         }
 
-        #fileUser {
+        #container #fileUser {
             width: 100%;
             display: none;
             flex-direction: column;
         }
 
-        #fileUser #btns {
+        #container #fileUser #btns {
             width: 100%;
             display: flex;
             flex-direction: column;
         }
 
-        #fileUser #btns input {
+        #container #fileUser #btns input {
             width: 100%;
             padding: 10px;
             margin-bottom: 5px;
@@ -277,7 +344,7 @@ export default {
             background-color: white;
         }
 
-        #fileUser #btns button {
+        #container #fileUser #btns button {
             width: 100%;
             padding: 10px;
             border: 1px solid grey;
@@ -285,20 +352,34 @@ export default {
             font-weight: bold;
         }
 
-        #bio-user div {
+        #container #preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+
+        #container #preview img {
+            max-width: 400px;
+            max-height: 400px;
+            object-fit: cover;
+            margin: auto;
+        }
+
+        #container #bio-user div {
             padding: 10px;
             background-color: white;
             border: 1px solid grey;
             border-radius: 5px;
         }
 
-        #annuler {
+        #container #annuler {
             width: 100%;
             display: none;
             margin-bottom: 5px;
         }
 
-        #annuler button {
+        #container #annuler button {
             width: 100%;
             padding: 10px;
             font-weight: bold;
@@ -306,13 +387,13 @@ export default {
             border-radius: 5px;
         }
         
-        #modif {
+        #container #modif {
             width: 100%;
             display: none;
             flex-direction: column;
         }
 
-        #modif input {
+        #container #modif input {
             width: 100%;
             padding: 10px;
             margin-bottom: 5px;
@@ -320,7 +401,7 @@ export default {
             border-radius: 5px;
         }
 
-        #modif button {
+        #container #modif button {
             width: 100%;
             padding: 10px;
             border: 1px solid grey;
@@ -328,13 +409,13 @@ export default {
             font-weight: bold;
         }
 
-        #supprConfirm {
+        #container #supprConfirm {
             width: 100%;
             display: none;
             flex-direction: column;
         }
 
-        #supprConfirm div {
+        #container #supprConfirm div {
             width: 100%;
             padding: 10px;
             margin-bottom: 5px;
@@ -344,7 +425,7 @@ export default {
             border-radius: 5px;
         }
 
-        #supprConfirm button {
+        #container #supprConfirm button {
             width: 100%;
             padding: 10px;
             border: 1px solid grey;
@@ -357,15 +438,11 @@ export default {
                 width: 800px;
             }
 
-            #container-secondaire {
+            #container #container-secondaire {
                 width: 500px;
             }
 
-            #container-post {
-                width: 850px;
-            }
-
-            #post {
+            #container #post {
                 width: 370px;
             }
             
@@ -379,7 +456,7 @@ export default {
                 width: 500px;
             }
 
-            #container-secondaire {
+            #container #container-secondaire {
                 width: 500px;
             }
 
@@ -390,19 +467,19 @@ export default {
                 width: 300px;
             }
 
-            #container-secondaire {
+            #container #container-secondaire {
                 width: 300px;
             }
 
-            #modif-and-delete-user {
+            #container #modif-and-delete-user {
                 
             }
 
-            #modif-and-delete-user > div {
+            #container #modif-and-delete-user > div {
                 flex-direction: column;
             }
 
-            #modif-and-delete-user i {
+            #container #modif-and-delete-user i {
                 margin-top: 5px;
             }
 

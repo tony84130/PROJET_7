@@ -19,7 +19,7 @@
         </div>
         <div id="photo-post">
             <a href="">
-                <img v-if="post.picture != null" :src="post.picture" :key="post.picture" alt="post user">
+                <img v-if="post.picturePost != null" :src="post.picturePost" :key="post.picturePost" alt="post user">
             </a>
         </div>
         <div v-if="post.message != 'null'" id="texte-post">{{ post.message }}</div>
@@ -28,13 +28,14 @@
     </div>    
 </div>
 
-    <form id="modif-post" @submit.prevent="modifPost">
+    <form id="modif-post" @submit.prevent="modifyPost">
         <div id="fileUser">
             <div id="preview" v-if="preview">
                 <img :src="preview" :alt="preview">
             </div>         
-            <div id="btns">                
-                <input type="file" ref="file" name="file" class="upload" id="file" @change="selectFile">             
+            <div id="btns">
+                <label for="file">Choisir une nouvelle image</label>
+                <input type="file" ref="file" name="file" class="upload" id="file" @change="updateFile">
             </div>
         </div>
 
@@ -65,8 +66,11 @@ export default {
                 img:true,
                 message: "",
                 userId: "",
-                picture: "",
+                picturePost: "",
                 posterId: "",
+                newFile: '',
+                preview: null,
+                errMsg: null
             }
         }
     },
@@ -85,13 +89,13 @@ export default {
                     this.post=data;
                     this.post.posterId = data[0].posterId;
                     this.post.message = data[0].message;
-                    this.post.picture = data[0].picture;
+                    this.post.picturePost = data[0].picturePost;
                 })
             })
             .catch(error => console.log(error))
     },  
     methods: {
-        selectFile(event) {
+        updateFile(event) {
             /* sur le onchange on va attribuer cette valeur à file (nécessaire pour l'envoi au backend) */
             this.file = this.$refs.file.files[0]
             let input = event.target
@@ -103,6 +107,49 @@ export default {
                 reader.readAsDataURL(input.files[0])
             }
         },
+        async modifyPost() {
+            /* on peut envoyer un post sans image mais il faut au moins qu'il y est un texte */     
+            if (!this.post.message) {
+                this.errMsg = "Error => vous devez remplir le champ <message> pour créer une nouvelle publication!"
+                return
+            }
+            /* on créé un objet formData afin de pouvoir ajouter le texte et surtout le file choisi */
+            let formData = new FormData()
+            formData.append('message', this.post.message)
+            if (this.post.newFile) {
+                formData.append('image', this.post.newFile)
+            }
+            /* envoi du form via axios.put de l'objet formData */
+            if (confirm("êtes vous sûr de vouloir modifier votre post ?")) {
+                axios.put(`http://localhost:3000/api/post/7`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    },
+                })  
+                    .then(res => this.$emit('add-Post', res.data), (window.location.reload()))
+                    .catch(error => console.log(error))
+            }
+
+
+            /* 
+            let formData = new FormData()
+            formData.append('message', this.message)
+            formData.append('image', this.file)
+            formData.append('userId', localStorage.getItem('userId'))
+            
+            axios.post('http://localhost:3000/api/post/', formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                },
+            })  
+                .then(res => this.$emit('add-Post', res.data), (window.location.reload()))
+                .catch(error => console.log(error))
+            */
+
+
+
+        }
+        /*
         modifPost() {
                 
             if (!this.message && !this.file) {
@@ -129,6 +176,7 @@ export default {
             this.preview = ''
             document.querySelector('form').reset()           
         },
+        */
         //modifPost() {
             //let hidden3 = document.getElementById("modif")
             //hidden3.style.display = "none";

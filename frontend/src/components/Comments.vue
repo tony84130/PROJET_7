@@ -4,8 +4,12 @@
     <div v-for="comment in comment" :key="comment.id" id="comment">
         <div id="user-comment">
                 
-            <img src="../assets/avatar.png" alt="photo user">
-            <div id="commentPseudo">{{ comment.pseudo }}</div>
+            <img v-if="comment.picture != `avatar.png`" v-bind:src="comment.picture" :key="comment.picture" alt="photo user">
+            <img v-else src="../assets/avatar.png" alt="photo user">
+
+            <div id="commentPseudo">{{ comment.prenom }} {{ comment.nom }}</div>
+
+            <!-- <img src="../assets/avatar.png" alt="photo user"> -->
             <!-- <Pseudo :parentPost="comment.user_id"/> -->
         </div>
         <div id="text-comment">{{ comment.text }}</div>
@@ -30,22 +34,25 @@ export default {
     */
     data() {
         return {
+            userId: "",
             comment: {
-                pseudo: "",
-                userId: "",
+                prenom: "",
+                nom: "",
                 text: "",
-                id: ""
+                id: "",
+                picture: ""
             },
             user: {
                 userId: "",
                 isAdmin: "",
                 id: "",
-                pseudo: ""
+                prenom: "",
+                nom: "",
             }
         }
     },
     beforeCreate() {
-        this.userId = JSON.parse(localStorage.getItem("userId"));
+        
         let url = `http://localhost:3000/api/post/get-comment/${this.parentPost}`;
         let options = {
             method: "GET",
@@ -57,7 +64,7 @@ export default {
             .then((res) => {
                 res.json().then(data =>{
                     this.comment=data;
-                    console.log(data)
+                    //this.comment.picture=data[0].picture;
                 })
             })
             .catch(error => console.log(error))
@@ -75,7 +82,6 @@ export default {
             .then((res) => {
                 res.json().then(data =>{
                     this.user = data[0];
-                    console.log("reponse :" + data)
                 })
             })
             .catch(error => console.log(error)) 
@@ -85,7 +91,7 @@ export default {
     methods: {
         //addComment(id_comment) {
         addComment() {
-            this.userId = JSON.parse(localStorage.getItem("userId"));
+            
             //let url = "http://localhost:3000/api/post/comment/" + id_comment;
             let url = "http://localhost:3000/api/post/comment/1";
             let options = {
@@ -103,7 +109,7 @@ export default {
         },
         
         deleteComment(id_comment) {
-            this.userId = JSON.parse(localStorage.getItem("userId"));
+            
             let url = "http://localhost:3000/api/post/delete-comment/" + id_comment;
             let options = {
                 method: "DELETE",
@@ -115,6 +121,7 @@ export default {
                 .then((response) => {
                     console.log(response);
                     //window.location.reload();
+                    alert("Commentaire supprimé !");
                     location.reload();
                 })
                 .catch(error => console.log(error))

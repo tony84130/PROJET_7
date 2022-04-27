@@ -10,7 +10,7 @@
             <input type="search" placeholder="Rechercher">
         </div>
         <div id="nav-droite">
-            <router-link to="/home" title="Home"><i class="fas fa-home"></i></router-link> 
+            <router-link to="/" title="Home"><i class="fas fa-home"></i></router-link> 
             <router-link to="/liked" title="Liked"><i class="fas fa-heart"></i></router-link> 
             <!-- <router-link to="/profil" title="Profil"><i class="fas fa-user"></i></router-link> -->
             <router-link to="/profil" title="Profil">
@@ -33,7 +33,8 @@ export default {
         return {
             user: {
             img:true,
-            pseudo: "",
+            prenom: "",
+            nom: "",
             userId: "",
             picture: "",
             bio: ""
@@ -54,7 +55,8 @@ export default {
                 res.json().then(data =>{
             this.user=data;
             this.user.picture = data[0].picture;
-            this.user.pseudo = data[0].pseudo;
+            this.user.prenom = data[0].prenom;
+            this.user.nom = data[0].nom;
             this.user.bio = data[0].bio;             
         })
         })
@@ -149,9 +151,10 @@ export default {
             display: flex;
         }
 
-        #iconOff i {
+        #iconOff {
             position: relative;
             top: 2px;
+            border: none;
         }
 
         nav #photo-profil-nav {

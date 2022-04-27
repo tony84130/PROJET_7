@@ -5,13 +5,11 @@
             <div @click="addLike" v-if="like.length == 0 || like.length == undefined"><i class="far fa-heart"></i></div>
             <div @click="addLike" v-else><i class="fas fa-heart"></i></div>
             
-            <a href="">
-                <div id="zeroLike" v-if="like.length == 0 || like.length == undefined">Soyez le premier à aimer ce post !</div>
-                <div id="zeroLikeSmall" v-if="like.length == 0 || like.length == undefined">0 j'aime</div>
-                <div v-else>{{ like.length }} j'aime</div>
-            </a>
+            <div id="zeroLike" v-if="like.length == 0 || like.length == undefined">Soyez le premier à aimer ce post !</div>
+            <div id="zeroLikeSmall" v-if="like.length == 0 || like.length == undefined">0 j'aime</div>
+            <div v-else>{{ like.length }} j'aime</div>
+
         </div>
-        <div><i class="fas fa-comment"></i></div>
     </div>
 </template>
 
@@ -24,7 +22,8 @@ export default {
     data() {
         return {
             like: {
-                pseudo: "",
+                prenom: "",
+                nom: "",
                 userId: "",
                 text: "",
             }
@@ -57,7 +56,7 @@ export default {
         
         addLike() {
         //addLike(post_id) {
-            this.userId = JSON.parse(localStorage.getItem("userId"));
+            
             //let url = "http://localhost:3000/api/post/like-post/1";
             let url = `http://localhost:3000/api/post/like-post/${this.parentPost}`;
             //let url = "http://localhost:3000/api/post/like-post/" + post_id;
@@ -78,3 +77,8 @@ export default {
 }
 </script>
 
+<style>
+    #heart-count .fas.fa-heart {
+        color: red;
+    }
+</style>

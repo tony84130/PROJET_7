@@ -1,9 +1,9 @@
 
 <template>
-    <div id="container-post" class="bloc">
+    <div id="container-post-other" class="bloc">
 
      <!-- Liste des posts -->   
-        <div v-for="post in post" :key="post.id" id="postUser">
+        <div v-for="post in post" :key="post.id" id="post">
 
             <div id="first-line">
                 <div id="user-info">
@@ -14,8 +14,8 @@
 
                     </a>
                 </div>
-                <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button>
-                <button v-if="post.posterId" type="button" @click="deleteMessage(post.id)" id="trash" class="accountbutton"><i class="fas fa-trash"></i></button>
+                <!-- <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button> -->
+                <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="deleteMessage(post.id)" id="trash" class="accountbutton"><i class="fas fa-trash"></i></button>
             </div>
             <div id="photo-post" v-if="post.picturePost != null">
                 <a href="">
@@ -40,7 +40,6 @@ import Pseudo from '../components/Pseudo.vue'
 import Likes from '../components/Likes.vue'
 import Comments from '../components/Comments.vue'
 import AddComment from '../components/AddComment.vue'
-import router from '../router'
 export default {
     name: "ListPost",
     components: {
@@ -52,17 +51,47 @@ export default {
     data() {
         return {
             post: {
-            img:true,
-            surname: "",
-            name: "",
-            userId: "",
-            content: "",
-        }
+                img:true,
+                surname: "",
+                name: "",
+                userId: "",
+                content: "",
+                posterId: ""
+            },
+            user: {
+                userId: "",
+                isAdmin: "",
+                id: "",
+                prenom: "",
+                nom: ""
+            }
     }
 },
+    beforeCreate() {
+        this.userId = JSON.parse(localStorage.getItem("userId"));
+        let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
+        let optionsUser = {
+            method: "GET",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token"),
+            }
+        };
+        fetch(urlUser, optionsUser)
+            .then((res) => {
+                res.json().then(data =>{
+                    this.user = data[0];
+                    this.user.id = data[0].isAdmin;
+                })
+            })
+            .catch(error => console.log(error)) 
+
+
+    },
     mounted() {
         this.userId = JSON.parse(localStorage.getItem("userId"));
-        let url = `http://localhost:3000/api/post/user/${this.userId}`;
+        const parsedUrl = new URL(window.location.href)
+        const userPageId = parsedUrl.pathname.split('/user/')[1]
+        let url = `http://localhost:3000/api/post/user/${userPageId}`;
         let options = {
             method: "GET",
             headers: {
@@ -72,7 +101,8 @@ export default {
         fetch(url, options)
             .then((res) => {
                 res.json().then(data =>{
-                    this.post=data;        
+                    this.post=data;   
+                    this.post.posterId = data[0].posterId;     
                 })
             })
             .catch(error => console.log(error))
@@ -94,9 +124,6 @@ export default {
                     window.location.reload();
                 })
                 .catch(error => console.log(error))
-        },
-        modifPost(id) {
-            router.push({ path: `/publication/${id}` })
         },
     },
 }
@@ -178,14 +205,14 @@ export default {
             border-radius: 5px;
         }
 
-        #container-post {
+        #container-post-other {
             display: flex;
             flex-wrap: wrap;
             width: 1000px;
             margin: auto;
         }
 
-        #postUser {
+        #container-post-other #post {
             border: 2px solid grey;
             border-radius: 10px;
             width: 450px;
@@ -195,11 +222,11 @@ export default {
             background-color: white;
         }
 
-        #postUser:hover {
+        #container-post-other #post:hover {
             box-shadow: 0px 0px 10px black;;
         }
 
-        #postUser #first-line {
+        #container-post-other #first-line {
             display: flex;
             height: 50px;
             align-items: center;
@@ -209,66 +236,66 @@ export default {
             justify-content: space-between;
         }
 
-        #postUser #user-info {
+        #container-post-other #user-info {
             display: flex;
             align-items: center;
             
             height: 100%;
         }
 
-        #postUser #user-info img {
+        #container-post-other #user-info img {
             height: 100%;
             max-width: 40px;
             margin-right: 5px;
             object-fit: cover;
         }
 
-        #postUser #modifPost {
+        #container-post-other #modifPost {
             position: absolute;
             right: 35px;
             display: flex;
             align-items: center;
         }
 
-        #postUser #modifPost i {
+        #container-post-other #modifPost i {
             position: relative;
             top: 1px;
         }
 
-        #postUser .accountbutton {
+        #container-post-other .accountbutton {
             border: none;
         }
 
-        #postUser #trash {
+        #container-post-other #trash {
             position: absolute;
             right: 15px;
         }
 
-        #postUser #trash i {
+        #container-post-other #trash i {
             position: relative;
             top: 1px;
         }
 
-        #postUser #photo-post {
+        #container-post-other #photo-post {
             width: 100%;
             height: 300px;
             border-top: 1px solid grey;
             border-bottom: 1px solid grey;
         }
 
-        #postUser #photo-post img {
+        #container-post-other #photo-post img {
             width: 100%;
             height: 100%;
             object-fit: contain;
         }
 
-        #postUser #texte-post {
+        #container-post-other #texte-post {
             padding: 10px;
             border-top: 1px solid grey;
             border-bottom: 1px solid grey;
         }
 
-        #postUser #second-line {
+        #container-post-other #second-line {
             display: flex;
             justify-content: space-between;
             padding: 5px 15px;
@@ -277,16 +304,16 @@ export default {
             font-weight: bold;
         }
 
-        #postUser #heart-count {
+        #container-post-other #heart-count {
             display: flex;
             align-items: center;
         }
 
-        #postUser #heart-count i {
+        #container-post-other #heart-count i {
             margin-right: 5px;
         }
 
-        #postUser #comment {
+        #container-post-other #comment {
             border-top: 1px solid grey;
             border-bottom: 1px solid grey;
             display: flex;
@@ -294,7 +321,7 @@ export default {
             padding: 5px;
         }
 
-        #postUser #user-comment {
+        #container-post-other #user-comment {
             display: flex;
             align-items: center;
             height: 50px;
@@ -306,30 +333,30 @@ export default {
             font-weight: bold;
         }
 
-        #postUser #user-comment img {
+        #container-post-other #user-comment img {
             height: 100%;
             max-width: 40px;
             margin-right: 5px;
             object-fit: cover;
         }
 
-        #postUser #texte-comment {
+        #container-post-other #texte-comment {
             padding: 5px;
         }
 
-        #postUser #add-comment {
+        #container-post-other #add-comment {
             display: flex;
             justify-content: space-between;
             padding: 5px 10px;
         }
 
-        #postUser #add-comment input {
+        #container-post-other #add-comment input {
             background-color: white;
             width: 85%;
             border: none;
         }
 
-        #postUser #add-comment button {
+        #container-post-other #add-comment button {
             padding: 5px;
             background-color: #EFEFEF;
             border: 1px solid grey;
@@ -338,22 +365,22 @@ export default {
             cursor: pointer;
         }
 
-        #postUser #zeroLike {
+        #container-post-other #zeroLike {
             display: none;
         }
 
-        #postUser #zeroLikeSmall {
+        #container-post-other #zeroLikeSmall {
             display: block;
         }
 
-        #postUser #comment {
+        #container-post-other #comment {
             flex-direction: column;
             align-items: flex-start;
             padding: 10px;
             position: relative;
         }
 
-        #postUser #commentPseudo {
+        #container-post-other #commentPseudo {
             width: 150px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -361,15 +388,15 @@ export default {
         
         @media screen and (max-width: 1050px) {
 
-            #container-post {
+            #container-post-other {
                 width: 850px;
             }
 
-            #postUser {
+            #container-post-other #post {
                 width: 370px;
             }
 
-            #postUser #postPseudo {
+            #container-post-other #postPseudo {
                 width: 200px;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -379,38 +406,39 @@ export default {
 
         @media screen and (max-width: 850px) {
 
-            #container-post {
+            #container-post-other {
                 width: 700px;
             }
 
-            #postUser {
+            #container-post-other #post {
                 width: 300px;
             }
 
-            #postUser #postPseudo {
+            #container-post-other #postPseudo {
                 width: 180px;
             }
             
         }
 
         @media screen and (max-width: 700px) {
-            #container-post {
+
+            #container-post-other {
                 width: 450px;
             }
 
-            #postUser {
+            #container-post-other #post {
                 width: 450px;
             }
 
-            #postUser #photo-post img {
+            #container-post-other #photo-post img {
                 height: 300px;
             }
 
-            #postUser #postPseudo {
+            #container-post-other #postPseudo {
                 width: 220px;
             }
 
-            #postUser #comment {
+            #container-post-other #comment {
                 flex-direction: column;
                 align-items: flex-start;
                 padding: 10px;
@@ -422,34 +450,34 @@ export default {
 
         @media screen and (max-width: 500px) {
 
-            #container-post {
+            #container-post-other {
                 width: 400px;
             }
 
-            #postUser {
+            #container-post-other #post {
                 width: 400px;
             }
 
-            #postUser #photo-post img {
+            #container-post-other #photo-post img {
                 height: 250px;
             }
 
         }
 
         @media screen and (max-width: 400px) {
-            #container-post {
+            #container-post-other {
                 width: 300px;
             }
 
-            #postUser {
+            #container-post-other #post {
                 width: 300px;
             }
 
-            #postUser #photo-post img {
+            #container-post-other #photo-post img {
                 height: 200px;
             }
 
-            #postUser #postPseudo {
+            #container-post-other #postPseudo {
                 width: 130px;
             }
 

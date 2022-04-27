@@ -2,11 +2,13 @@
 <template>    
     <img v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
     <img v-else src="../assets/avatar.png" alt="photo user">
-
-    <div id="postPseudo" :key="user.id">{{ user.pseudo }}</div>
+    
+    <div id="postPseudo" :key="user.id" @click="userPage()">{{ user.prenom }} {{ user.nom }}</div>
+    
 </template>
 
 <script>
+import router from '../router'
 export default {
     name: "userPseudo",
     props : {
@@ -15,20 +17,24 @@ export default {
     data() {
         return {
             user: {
-                pseudo: "",
+                prenom: "",
+                nom: "",
                 picture: "",
                 id: "",
             }
         }
     },
     mounted() {
+        
         if(this.parentPost == undefined){
             console.log("no parent, the commponent is not created");
         }
         else{
-            this.userId = JSON.parse(localStorage.getItem("userId"));
+            
             let url = `http://localhost:3000/api/auth/${this.parentPost}`;
             //let url = `http://localhost:3000/api/auth/1`;
+            //console.log(url)
+            //console.log(this.parentPost)
             let options = {
                 method: "GET",
                 headers: {
@@ -39,13 +45,20 @@ export default {
                 .then((res) => {
                     res.json().then(data =>{
                         this.user=data;
-                        this.user.pseudo = data[0].pseudo;
+                        this.user.prenom = data[0].prenom;
+                        this.user.nom = data[0].nom;
                         this.user.picture = data[0].picture;
                     })
                 })
                 .catch(error => console.log(error))
             }
-        console.log(this.user)
+        
     },
+    methods: {
+        userPage() {
+            router.push({ path: `/user/${this.parentPost}` })
+        },
+    }
+    
 }
 </script>

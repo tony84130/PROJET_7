@@ -1,33 +1,34 @@
 <template>
-<div id="container-centraux" class="bloc">
+<main id="container-centraux" class="bloc">
 
     <!-- Liste des posts -->   
     <div v-for="post in post" id="post" :key="post.id" class="bloclist">
 
         <div id="first-line">
             <div id="user-info">
-                <a href="">
+                
                     <!-- <img src="../assets/IDphoto.png" alt="photo user"> -->
                     <!-- <div>{{ post.posterId }}</div> -->
                     <Pseudo :parentPost="post.posterId"/>
-                </a>
+                
             </div>
             <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button>
             <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
         </div>
         <div id="photo-post">
             <a href="">
-                <img v-if="post.picture != null" :src="post.picture" :key="post.picture" alt="post user">
+                <img v-if="post.picturePost != null" :src="post.picturePost" :key="post.picturePost" alt="post user">
             </a>
         </div>
         <div v-if="post.message != 'null'" id="texte-post">{{ post.message }}</div>
+
             
         <Likes :parentPost="post.id"/>
         <Comments :parentPost="post.id"/>
         <AddComment :parentPost="post.id"/>
        
     </div>    
-</div>
+</main>
 
   
 
@@ -38,6 +39,8 @@ import Pseudo from '../components/Pseudo.vue'
 import Likes from '../components/Likes.vue'
 import Comments from '../components/Comments.vue'
 import AddComment from '../components/AddComment.vue'
+import axios from 'axios';
+import router from '../router'
 
 export default {
     name: "ListPost",
@@ -45,10 +48,11 @@ export default {
         Pseudo,
         Likes,
         Comments,
-        AddComment
+        AddComment,
     },
     data() {
         return {
+            
             post: {
                 img:true,
                 surname: "",
@@ -61,7 +65,8 @@ export default {
                 userId: "",
                 isAdmin: "",
                 id: "",
-                pseudo: ""
+                prenom: "",
+                nom: "",
             }
         }
     },
@@ -84,7 +89,7 @@ export default {
             })
             .catch(error => console.log(error))
     },  
-    mounted() {
+    created() {
         this.userId = JSON.parse(localStorage.getItem("userId"));
         let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
         let optionsUser = {
@@ -97,7 +102,6 @@ export default {
             .then((res) => {
                 res.json().then(data =>{
                     this.user = data[0];
-                    console.log("reponse :" + data)
                 })
             })
             .catch(error => console.log(error)) 
@@ -119,15 +123,55 @@ export default {
             fetch(url, options)
                 .then((response) => {
                     console.log(response);
+                    alert("Post supprimé !");
                     window.location.reload();
                 })
                 .catch(error => console.log(error))
         },
+        /*
+        modifPost() {
+        //modifPost(id) {
+            //router.push({ path: `/publication/${id}` })
+            let hidden2 = document.getElementById("texte-post")
+            hidden2.style.display = "none";
+            let hidden3 = document.getElementById("annuler")
+            hidden3.style.display = "flex";
+            let hidden4 = document.getElementById("modif")
+            hidden4.style.display = "flex";
+            
+        },
+        */
+        modifPost(id) {
+            router.push({ path: `/publication/${id}` })
+        },
+        async modifyPost(id_post) {
+            /* on peut envoyer un post sans image mais il faut au moins qu'il y est un texte */     
+            if (!this.post.message) {
+                this.errMsg = "Error => vous devez remplir le champ <message> pour créer une nouvelle publication!"
+                return
+            }
+            /* on créé un objet formData afin de pouvoir ajouter le texte et surtout le file choisi */
+            let formData = new FormData()
+            formData.append('message', this.post.message)
+            if (this.post.newFile) {
+                formData.append('image', this.post.newFile)
+            }
+            /* envoi du form via axios.put de l'objet formData */
+            if (confirm("êtes vous sûr de vouloir modifier votre post ?")) {
+                axios.put(`http://localhost:3000/api/post/7${id_post}`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    },
+                })  
+                    .then(res => this.$emit('add-Post', res.data), (window.location.reload()))
+                    .catch(error => console.log(error))
+            }
+        }
     },
 }
 </script>
 
-<style lang="scss">
+<style>
 
         * {
             margin: 0px;
@@ -152,20 +196,7 @@ export default {
             background-color: #EFEFEF;
         }
     
-        input {
-            background-color: #EFEFEF;
-            border: none;
-            width: 100%;
-            height: 100%;
-            padding: 5px 10px;
-        }
-
-        #container {
-            display: flex;
-            justify-content: space-around;
-            padding: 10px;
-            padding-top: 80px;
-        }
+        
 
         #container-centraux {
             width: 700px;
@@ -177,12 +208,13 @@ export default {
         }
 
         #container-centraux > div {
-            margin: 0px 0px 15px 0px;
+            margin: 0px 0px 30px 0px;
         }
 
         #post {
             border: 2px solid grey;
             background-color: white;
+            border-radius: 10px;
         }
 
         #post:hover {
@@ -190,7 +222,7 @@ export default {
         }
 
         #first-line {
-            border: 1px solid grey;
+            border-radius: 10px 10px 0px 0px;
             display: flex;
             height: 60px;
             align-items: center;
@@ -232,7 +264,8 @@ export default {
         #photo-post {
             width: 100%;
             height: 100%;
-            border: 2px solid grey;
+            border-top: 1px solid grey;
+            border-bottom: 1px solid grey;
         }
 
         #photo-post img {
@@ -243,15 +276,17 @@ export default {
 
         #texte-post {
             padding: 10px;
-            border: 1px solid grey;
+            border-top: 1px solid grey;
+            border-bottom: 1px solid grey;
+            font-size: 120%;
         }
 
         #second-line {
             display: flex;
             justify-content: space-between;
             padding: 5px 15px;
-            border: 1px solid grey;
             font-weight: bold;
+            border-bottom: 1px solid grey;
         }
 
         #heart-count {
@@ -265,10 +300,18 @@ export default {
 
         #zeroLikeSmall {
             display: none;
+            font-weight: normal;
         }
 
+        #zeroLike {
+            font-weight: normal;
+        }
+
+        
+
         #comment {
-            border: 1px solid grey;
+            border-top: 1px solid grey;
+            border-bottom: 1px solid grey;
             display: flex;
             align-items: center;
             padding: 5px;
@@ -302,12 +345,13 @@ export default {
             justify-content: space-between;
             padding: 5px 10px;
             background-color: white;
-            border: 1px solid grey;
+            border-radius: 0px 0px 10px 10px;
         }
 
         #add-comment input {
             background-color: white;
             width: 85%;
+            border: none;
         }
 
         #add-comment button {
@@ -326,11 +370,6 @@ export default {
         }
 
         @media screen and (max-width: 1050px) {
-            #container {
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
 
             #container-centraux {
                 left: 0px;

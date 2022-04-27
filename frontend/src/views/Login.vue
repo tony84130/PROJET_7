@@ -1,12 +1,12 @@
 
 <template>
-    <div id="container">
+    <main id="container-login">
 
-        <div id="container-centraux" class="gros-logo-gauche">
+        <div id="container-centraux-login" class="gros-logo-gauche">
             <img src="../assets/icon-above-font.png" alt="Logo Groupomania" id="logo-gauche">
         </div>
 
-        <div v-on:submit.prevent="login" id="container-centraux" class="container-droit">
+        <div v-on:submit.prevent="login" id="container-centraux-login" class="container-droit-login">
             <form id="connexion">
                 <h1>Groupomania</h1>
                 <img src="../assets/icon-above-font.png" alt="Logo Groupomania" id="logo-mobile">
@@ -25,7 +25,7 @@
             </div>
         </div>
 
-    </div>
+    </main>
 
     <footer>
         <div id="container-bas">
@@ -74,10 +74,13 @@ export default {
                             alert(" Identifiant ou Mot de passe incorrect ! ");
                             return -1
                         }
-                        localStorage.setItem("userId", content.userId)
-                        localStorage.setItem("token", content.token)
-                         this.$router.push("/home");
-                         //alert(" Bienvenue sur Groupomania, vous pouvez à présent échanger avec votre équipe ! ");
+                        else {
+                            localStorage.setItem("userId", content.userId),
+                            localStorage.setItem("token", content.token)
+                            this.$router.push("/");
+                        }
+                        
+                        //alert(" Bienvenue sur Groupomania, vous pouvez à présent échanger avec votre équipe ! ");
                     }     
                 })
                     
@@ -87,7 +90,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
         * {
             margin: 0px;
             padding: 0px;
@@ -113,14 +116,14 @@ export default {
             display: none;
         }
 
-        #container {
+        #container-login {
             display: flex;
             align-items: center;
             justify-content: space-around;
             min-height: calc(100vh - 59px);
         }
 
-        #container-centraux {
+        #container-centraux-login {
             width: 500px;
             height: 500px;
             display: flex;
@@ -136,7 +139,7 @@ export default {
             border: 1px solid grey; 
         }
 
-        .container-droit {
+        .container-droit-login {
             display: flex;
             flex-direction: column-reverse;
         }
@@ -214,7 +217,7 @@ export default {
         }
 
         @media screen and (max-width: 1200px) {
-            #container-centraux {
+            #container-centraux-login {
                 width: 400px;
                 height: 400px;
             }
@@ -235,16 +238,16 @@ export default {
         }
 
         @media screen and (max-width: 900px) {
-            #container {
+            #container-login {
                 flex-direction: column;
                 justify-content: center;
             }
 
-            #container-centraux {
+            #container-centraux-login {
                 height: 500px;
             }
 
-            #container-centraux.gros-logo-gauche {
+            #container-centraux-login.gros-logo-gauche {
                 display: none;
             }
 
@@ -273,11 +276,11 @@ export default {
 
         @media screen and (max-width: 500px) {
 
-            #container {
+            #container-login {
                 width: 300px;
             }
 
-            #container-centraux {
+            #container-centraux-login {
                 width: 300px;
             }
 

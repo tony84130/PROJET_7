@@ -94,7 +94,8 @@ export default {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 },
             })  
-                .then(res => this.$emit('add-Post', res.data), (window.location.reload()))
+                .then(res => this.$emit('add-Post', res.data), console.log("Post envoyé !")/*(window.location.reload())*/)
+                //.then(window.location.reload())
                 .catch(error => console.log(error))
             /* on emit le toggle-Create pour cacher ce composant tout en effaçant les inputs */
             this.$emit('toggle-Create')
@@ -143,23 +144,24 @@ export default {
                     if (res.ok) {
                     res.json().then(result =>{
                       if(this.file){
-                            this.sendFile(result.picture);
+                            this.sendFile(result.picturePost);
                         }
                     })
                     
                 window.location.reload();
                     this.inputMessage = {} // Retour à 0 des inputs //
                 } else {
-                    alert("Post publié avec succès !");
+                    //alert("Post publié avec succès !");
+                    console.log("Post publié avec succès !");
                 }
                 })
-                    .then(this.$router.push("/home"))
+                    .then(this.$router.push("/"))
                     .catch(error => console.log(error))  
         },
-        sendFile(picture){
+        sendFile(picturePost){
             let formData = new FormData();
             formData.append('image', this.file);
-            axios.post( 'http://localhost:3000/api/post/' + picture, formData, {
+            axios.post( 'http://localhost:3000/api/post/' + picturePost, formData, {
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem("token"),
                     'Content-Type': 'multipart/form-data',
@@ -182,7 +184,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
         * {
             margin: 0px;
             padding: 0px;
@@ -208,6 +210,7 @@ export default {
 
         #add-post {
             border: 2px solid grey;
+            border-radius: 10px;
             background-color: white;
             margin-bottom: 15px;
         }
@@ -215,11 +218,11 @@ export default {
         #titre-add-post {
             padding: 10px;
             font-weight: bold;
-            border: 1px solid grey;
         }
 
         input[type="text"] {
-            border: 1px solid grey;
+            border-top: 1px solid grey;
+            border-bottom: 1px solid grey;
             padding: 10px 20px;
             width: 100%;
         }
@@ -240,6 +243,14 @@ export default {
             background-color: white;
             width: 100%;
         }
+
+        input {
+            border: none;
+            height: 100%;
+            padding: 5px 10px;
+        }
+
+        
 
         #message {
             
@@ -262,7 +273,6 @@ export default {
 
         #btns {
             display: flex;
-            border: 1px solid grey;
             padding: 5px;
         }
 

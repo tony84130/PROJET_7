@@ -5,7 +5,7 @@ const fs = require("fs");
 // Vérifier le tri des publications de la plus récente à la plus ancienne ??
 // Récupération de tous les posts
 exports.getAllPost = (req, res, next) => {
-    //const sql ="SELECT posts.id, posterId, message, posts.picture, datePost, isAdmin FROM posts JOIN users ON (users.id = posts.posterId);";
+    //const sql ="SELECT posts.id, posterId, message, posts.picturePost, datePost, isAdmin FROM posts JOIN users ON (users.id = posts.posterId);";
     //const sql = `SELECT * FROM posts ORDER BY posterId`;
     const sql = `SELECT * FROM posts ORDER BY datePost DESC`;
 
@@ -22,8 +22,9 @@ exports.getAllPost = (req, res, next) => {
 exports.getOnePost = (req, res, next) => {
     const post_id = req.params.id;
     const sql = 'SELECT * FROM posts WHERE posts.id= ?';
+    const sql2 ="SELECT posts.picturePost, posts.id, posts.posterId, posts.message, users.picture, users.prenom, users.nom FROM posts JOIN users ON (posts.posterId = users.id) WHERE posts.id = ?;";
 
-    db.query(sql, post_id, (err, docs) => {
+    db.query(sql2, post_id, (err, docs) => {
         if (err) res.status(404).json({err});
         if (!err) res.status(200).json(docs);
     })
@@ -54,7 +55,7 @@ exports.createPost = (req, res, next) => {
         message: req.body.message,
         posterId: `${req.auth.userId}`,
         //posterPseudo: `${req.auth.userPseudo}`,
-        picture: imageUrl
+        picturePost: imageUrl
     };
     const sql = "INSERT INTO posts SET ?";
     db.query(sql, newPostWithImage, (err, docs) => {
@@ -67,7 +68,7 @@ exports.createPost = (req, res, next) => {
         message: req.body.message,
         posterId: `${req.auth.userId}`,
         //posterPseudo: `${req.auth.userPseudo}`,
-        picture: null
+        picturePost: null
     }
 
     const sql = "INSERT INTO posts SET ?"
@@ -107,8 +108,8 @@ exports.deletePost = (req, res, next) => {
 
         db.query(sqlInfos, [postId], (err, docs) => {
             if (err) throw err;
-            if (docs[0].picture) {
-                filename = docs[0].picture.split("/images/posts/")[1];
+            if (docs[0].picturePost) {
+                filename = docs[0].picturePost.split("/images/posts/")[1];
                 console.log(filename);
             }
             if (userId == docs[0].posterId || adminCheckout == 1) {

@@ -22,7 +22,7 @@ exports.commentPost = (req, res, next) => {
 exports.getCommentsPost = (req, res, next) => {
     const postId = req.params.id;
     //const sql ="SELECT * FROM comments WHERE post_id = ?;";
-    const sql ="SELECT comments.id, pseudo, post_id, user_id, text FROM comments JOIN users ON (users.id = comments.user_id) WHERE post_id = ?;";
+    const sql ="SELECT comments.id, picture, prenom, nom, post_id, user_id, text FROM comments JOIN users ON (users.id = comments.user_id) WHERE post_id = ?;";
     //const sql ="SELECT id, user_id, text FROM comments WHERE post_id = ?;";
     db.query(sql, postId, (err, docs) => {
       if (err) {

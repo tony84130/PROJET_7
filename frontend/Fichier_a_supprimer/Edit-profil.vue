@@ -1,12 +1,10 @@
-
-
 <template>
 
     <div id="container">
         <div id="container-user">
             <img id="photo-profil" v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
             <img id="photo-profil" v-else src="../assets/avatar.png" alt="photo user">
-            <div>{{ user.pseudo }}</div>
+            <div>{{ user.prenom }} {{ user.nom }}</div>
         </div>
     
         <div id="container-secondaire">
@@ -20,89 +18,114 @@
                     </label>
                     <input type="file" id="avatar" name="avatar" accept="image/png, image/jpg, image/jpeg">
                 </div>
-                <div>
-                    <p>Modifier la biographie</p>
+                <div id="modif-validation">
+                    <p>Valider la biographie</p>
                     <div><i class="fas fa-cog"></i></div>
                 </div>
-                <div @click="deleteAccount">
+                <div id="delete-user">
                     <p>Supprimer le profil</p>
                     <div><i class="fas fa-trash"></i></div>
                 </div>
             </div>
             <div id="bio-user">
-                <div>{{ user.bio }}</div>
+                <input v-model="user.bio" type="text">
             </div>
         </div>
+
+                <div>
+                    <label for="picture">Photo de profil:</label>
+                    <input id="picture" type="file" name="photo_profil" @change="handleFileUpload($event)" required/>
+                </div>
+                <div>
+                  <button v-on:click="sendFile()">Publier la photo</button>
+                </div>
+
+            <form @submit.prevent="editProfile">
+                <label for="bio">Changer de bio :</label>
+                <input type="text" name="bio" v-model="updateUser.bio">
+                <input type="submit" value="modifier" @click.prevent="modifyProfile">
+            </form>
+
     </div>
-    
+
 </template>
 
-
-
 <script>
-export default {
-    name: 'Account-App',
-    components: {
+const axios = require('axios').default;
 
+export default {
+    name: "List-user",
+    components: {
+        //CommentPost,
+        //PreferButton,
+        //BlocComment
     },
     data() {
         return {
+            
             user: {
-                userId: localStorage.getItem("userId"),
-                pseudo: "",
+                img:true,
+                prenom: "",
+                nom: "",
+                userId: "",
                 picture: "",
                 bio: ""
             },
-            inputAccount: {
-                pseudo: "",
-            }
+            updateUser: {
+                bio: "",
+            },
+            file: '',
+            errMsg: null
         }
     },
     mounted() {
-        let url = "http://localhost:3000/api/auth/10"
+        this.userId = JSON.parse(localStorage.getItem("userId"));
+        let url = "http://localhost:3000/api/auth/29";
         let options = {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem("token"),
             }
-            
         };
         fetch(url, options)
             .then((res) => {
-                res.json().then(result =>{
+                res.json().then(data =>{
+            this.user=data;
+            this.user.picture = data[0].picture;
+            this.user.prenom = data[0].prenom;
+            this.user.nom = data[0].nom;
+            this.user.bio = data[0].bio;             
+        })
+        })
+        .catch(error => console.log(error))
+    },
+    methods: {
+        
+        modifyProfile() {            
+            let formData = new FormData()
+            formData.append('bio', this.updateUser.bio)      
 
-            this.user.picture = result[0].picture;
-            this.user.bio = result[0].bio;
-            this.user.pseudo = result[0].pseudo;
-            })
-            .catch(error => console.log(error))
-            })},
-     methods: {
-        deleteAccount() {
-            let url = "http://localhost:3000/api/auth/10";
-            let options = {
-                method: "DELETE-user",
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
-                }
-            };
-            fetch(url, options)
-                .then((response) => {
-                    console.log(response);
-                    localStorage.clear();
-                    alert("Compte supprimé !");
+            /* on envoie notre requête */
+            if (confirm("êtes vous sûr de vouloir modifier votre profil ?")) {
+                axios.put(`http://localhost:3000/api/user/profil/${localStorage.getItem('userId')}`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
                 })
-                .then(this.$router.push("/signup"))
-                .catch(error => console.log(error))
-        },
-     },
-} 
+                    //.then(location.reload())
+                    .catch(error => {error})
+            } else {
+                location.reload()
+            }
+        }
+
+    },
+}
 </script>
 
 
-
 <style>
-        #modif-photo {
+    #modif-photo {
             cursor: pointer;
         }
 

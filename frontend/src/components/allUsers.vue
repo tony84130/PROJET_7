@@ -5,16 +5,15 @@
         <h2>suggestions</h2>
         <div id="suggestions">
 
-            <div v-for="user in users" :key="user.id" id="user-suggestions">
-                <router-link :to="{ name: 'User-page', params: {id: 1 }}" title="Profil"> 
+            <div v-for="user in users" :key="user.id" id="user-suggestions" @click="userPage(user.id)">
+                <!-- <router-link :to="{ name: 'User-page', params: {id: 28 }}" title="Profil"> -->
                 
-                <!-- <router-link to="/test11" title="User-page"> -->
+                <!-- <router-link to="/user" title="User-page"> -->
                 
-
                     <img v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
                     <img v-else src="../assets/avatar.png" alt="photo user">
-                    <div>{{ user.id }} : {{ user.pseudo }}  </div>
-                </router-link> 
+                    <div>{{ user.prenom }} {{ user.nom }}</div>
+                <!-- </router-link> -->
             </div>  
         </div>
     </div>
@@ -24,20 +23,22 @@
 </template>
 
 <script>
+import router from '../router'
 export default {
     name: "ListUser",
     data() {
         return {
             users: {
                 img:true,
-                pseudo: "",
+                prenom: "",
+                nom: "",
                 userId: "",
                 picture: "",
                 id: "" 
             }   
         }
     },
-    mounted() {
+    beforeCreate() {
         this.userId = JSON.parse(localStorage.getItem("userId"));
         let url = "http://localhost:3000/api/auth";
         let options = {
@@ -56,7 +57,9 @@ export default {
             .catch(error => console.log(error)) 
     },
     methods: {
-        
+        userPage(id) {
+            router.push({ path: `/user/${id}` })
+        },
         deleteMessage(id_post) {
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let url = "http://localhost:3000/api/post/" + id_post;
@@ -78,7 +81,7 @@ export default {
              
 </script>
 
-<style lang="scss">
+<style scoped>
 
         * {
             margin: 0px;
@@ -110,19 +113,9 @@ export default {
             padding-top: 100px;
         }
 
-        #container-centraux {
-            width: 700px;
-            display: flex;
-            flex-direction: column;
-            margin: auto;
-        }
-
-        #container-centraux > div {
-            margin: 10px 0px;
-        }
-
         #container-droite {
-            border: 3px solid grey;
+            border: 2px solid grey;
+            border-radius: 10px;
             width: 300px;
             padding: 20px;
             margin-top: 10px;
@@ -168,10 +161,7 @@ export default {
         }
 
         @media screen and (max-width: 1300px) {
-            #container-centraux {
-                left: -150px;
-            }
-
+            
             #container-droite {
                 width: 250px;
             }
@@ -188,10 +178,6 @@ export default {
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-            }
-
-            #container-centraux {
-                left: 0px;
             }
             
             #container-droite {
@@ -215,9 +201,6 @@ export default {
         }
 
         @media screen and (max-width: 750px) {
-            #container-centraux {
-                width: 500px;
-            }
 
             #container-droite {
                 width: 500px;
@@ -225,9 +208,6 @@ export default {
         }
 
         @media screen and (max-width: 550px) {
-            #container-centraux {
-                width: 400px;
-            }
 
             #container-droite {
                 width: 400px;
@@ -236,9 +216,6 @@ export default {
         }
 
         @media screen and (max-width: 450px) {
-            #container-centraux {
-                width: 300px;
-            }
 
             #container-droite {
                 width: 300px;

@@ -2,8 +2,8 @@
   <div class="home">
     <div class="container">
       <Nav />
-      <Edit />
-      <Profil />
+      <User />
+      <Post />
     </div>
   </div>
 </template>
@@ -13,14 +13,14 @@
 <script>
 // @ is an alias to /src
 import Nav from "@/components/Navbar.vue";
-import Edit from "@/components/Edit-profil.vue";
-import Profil from "@/components/allPostsFromUser.vue";
+import User from "@/components/UserPage-TEST.vue";
+import Post from "@/components/allPostsFromOtherUser.vue";
 export default {
   name: "Profil-page",
   components: {
     Nav,
-    Edit,
-    Profil,
+    User,
+    Post,
   },
 };
 </script>

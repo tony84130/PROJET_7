@@ -1,20 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-//import Home from "../views/Home.vue";
 import store from '../store/index.js';
 
 
 const routes = [
   {
-    path: "/home",
+    path: "/",
     name: "Home",
     component: () =>
     import("../views/Home.vue"),
-  },
-  {
-    path: "/navbar",
-    name: "navbar",
-    component: () =>
-    import("../components/Navbar.vue"),
   },
   {
     path: "/signup",
@@ -23,16 +16,10 @@ const routes = [
       import("../views/Signup.vue"),
   },
   {
-    path: '/user/:id',
-    name: 'user',
+    path: "/login",
+    name: "login",
     component: () =>
-      import("../views/Profil.vue"),
-  },
-  {
-    path: '/settings',
-    name: 'settings',
-    component: () =>
-      import("../views/Edit-profil.vue"),
+      import("../views/Login.vue"),
   },
   {
     path: '/profil',
@@ -41,52 +28,17 @@ const routes = [
       import("../views/Profil.vue"),
   },
   {
-    path: "/login",
-    name: "login",
+    path: `/user/:id`,
+    name: "User-page",
+    props: true,
     component: () =>
-      import("../views/Login.vue"),
+      import("../views/OtherProfil.vue"),
   },
   {
-    path: "/test1",
-    name: "Login-Sugg",
+    path: "/publication/:id",
+    name: "Modify-Publication",
     component: () =>
-      import("../components/allUsers.vue"),
-  },
-  {
-    path: "/test4",
-    name: "Signup-page4",
-    component: () =>
-      import("../views/allPosts.vue"),
-  },
-  {
-    path: "/test5",
-    name: "Signup-page5",
-    component: () =>
-      import("../components/allPostsFromUser.vue"),
-  },
-  {
-    path: "/test6",
-    name: "Signup-page6",
-    component: () =>
-      import("../components/UserInfos.vue"),
-  },
-  {
-    path: "/test7",
-    name: "Signup-page7",
-    component: () =>
-      import("../components/addPost.vue"),
-  },
-  {
-    path: "/test8",
-    name: "Signup-page8",
-    component: () =>
-      import("../views/Test-delete.vue"),
-  },
-  {
-    path: "/test9",
-    name: "Signup-page9",
-    component: () =>
-      import("../views/Test-modifPost.vue"),
+      import("../views/Modify-Publication.vue"),
   },
   {
     path: "/test10",
@@ -99,13 +51,7 @@ const routes = [
     name: "Liked-page",
     component: () =>
       import("../views/Liked-page.vue"),
-  },
-  {
-    path: `/test11/:id`,
-    name: "User-page",
-    component: () =>
-      import("../components/UserPage-TEST.vue"),
-  },
+  }
 ];
 
 const router = createRouter({

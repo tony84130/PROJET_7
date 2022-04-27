@@ -21,45 +21,37 @@ const creatToken = (id) => {
 // Vérifier pour le pseudo déjà existant ?? Celui dans les commentaires ??
 // Création d'un compte utilisateur
 exports.signUp = (req, res, next) => {
-  try {
-    console.log(req.body);
-    const password = req.body.password;
-    const email = req.body.email;
-    const pseudo = req.body.pseudo;
-    //const sql = `SELECT email, pseudo FROM users WHERE email=? OR pseudo=?`;
-    const sql = `SELECT email FROM users WHERE email=?`;
-    const sqlPseudo = `SELECT pseudo FROM users WHERE pseudo=?`;
-    //let query = db.query(sql, email, pseudo, async (err, docs) => {
-    if (!email || !password || !pseudo ) {
+  console.log(req.body);
+  const password = req.body.password;
+  const email = req.body.email;
+  const prenom = req.body.prenom;
+  const nom = req.body.nom;
+  //const pseudo = req.body.pseudo;
+  //const sql = `SELECT email, pseudo FROM users WHERE email=? OR pseudo=?`;
+  const sql = `SELECT email FROM users WHERE email=?`;
+  //const sqlPseudo = `SELECT pseudo FROM users WHERE pseudo=?`;
+  //let query = db.query(sql, email, pseudo, async (err, docs) => {
+
+  let query = db.query(sql, email, async (err, docs) => {
+    console.log("erreur ici :" + docs)
+    if (err) throw err;
+
+    if (!email || !password || !prenom || !nom ) {
       return res.status(400).json({ error: "Veuillez remplir toutes les informations demandées !" });
     }
-
-    let query = db.query(sql, email, async (err, docs) => {
-      console.log("erreur ici :" + docs);
-      let result = false;
+    if (docs.length >= 1) {
+      return res.status(400).json({ error: "Utilisateur déja existant !" });
+    }
+    
+    /*
+    let query = db.query(sqlPseudo, pseudo, async (err, docs) => {
       if (err) throw err;
       if (docs.length >= 1) {
-        result =  true;
+        return res.status(400).json({ error: "Pseudo déja existant !" });
       }
-      return result;
     });
-    console.log(query);
-    if(query) { return res.status(400).json({ error: "Utilisateur déja existant !" })}
-    console.log("Email valide");
-
-    let queryPseudo = db.query(sqlPseudo, pseudo, async (err, docs1) => {
-      console.log("erreur ici :" + docs);
-      let result = false;
-      if (err) throw err;
-      if (docs.length >= 1) {
-        result =  true;
-      }
-      return result;
-    });
-    console.log(query);
-    if(query) { return res.status(400).json({ error: "Pseudo déja existant !" })}
-    console.log("Pseudo valide");
-
+    */
+    
     if (password.length <= 8) {
       return res.status(400).json({
         message: "Le mot de passe doit être de 6 caractéres minimum!",
@@ -70,7 +62,8 @@ exports.signUp = (req, res, next) => {
         .hash(req.body.password, 10)
         .then((hash) => {
           const newUser = {
-            pseudo: req.body.pseudo,
+            prenom: req.body.prenom,
+            nom: req.body.nom,
             email: req.body.email,
             password: hash,
             //isAdmin: req.body.isAdmin,
@@ -84,9 +77,9 @@ exports.signUp = (req, res, next) => {
         })
         .catch((error) => res.status(500).json({ error }));
     }
-  } catch (error) {
-    res.status(500).json({ error });
-  }
+  });
+
+  
 };
 
 // Passer le pseudo à l'utilisateur connecté ??
@@ -157,7 +150,7 @@ res.status(200).json({
 
 // Récupération des infos de tous les utilisateurs
 exports.getAllUsers = (req, res, next) => {
-  const sql = `SELECT id, email, pseudo, isAdmin, bio, picture FROM users`;
+  const sql = `SELECT id, email, prenom, nom, isAdmin, bio, picture FROM users`;
   let query = db.query(sql, (err, docs) => {
     if (err) throw err;
     res.status(200).json(docs);
@@ -167,7 +160,7 @@ exports.getAllUsers = (req, res, next) => {
 // Récupération des infos d'un utilisateur
 exports.userInfo = (req, res, next) => {
   const userId = req.params.id;
-  const sql = `SELECT id, email, pseudo, isAdmin, bio, picture FROM users WHERE id='${userId}'`;[]
+  const sql = `SELECT id, email, prenom, nom, isAdmin, bio, picture FROM users WHERE id='${userId}'`;[]
   let query = db.query(sql, (err, docs) => {
     if (err) throw err;
     res.status(200).json(docs);
@@ -178,7 +171,7 @@ exports.userInfo = (req, res, next) => {
 // Récupération des infos de l'utilisateur connecté
 exports.userProfil = (req, res, next) => {
   const userId = req.auth.userId;
-  const sql = `SELECT id, email, pseudo, isAdmin, bio, picture FROM users WHERE id='${userId}'`;
+  const sql = `SELECT id, email, prenom, nom, isAdmin, bio, picture FROM users WHERE id='${userId}'`;
   let query = db.query(sql, (err, docs) => {
     res.status(200).json(docs);
     console.log(userId)
@@ -290,7 +283,7 @@ exports.updateUser = (req, res, next) => {
   const userPageId = req.params.id;
   const userId = req.auth.userId;
   const bio = req.body.bio;
-  const sqlInfos = `SELECT pseudo, id, email, bio, picture FROM users WHERE id='${userPageId}'`;
+  const sqlInfos = `SELECT prenom, nom, id, email, bio, picture FROM users WHERE id='${userPageId}'`;
   const sqlAdminInfos = `SELECT isAdmin FROM users WHERE id='${userId}'`;
   let adminCheckout = null;
 
@@ -330,7 +323,7 @@ exports.updatePictureUser = (req, res, next) => {
   const userId = req.auth.userId;
   const bio = req.body.bio;
   const file = req.file;
-  const sqlInfos = `SELECT pseudo, id, email, bio, picture FROM users WHERE id='${userPageId}'`;
+  const sqlInfos = `SELECT prenom, nom, id, email, bio, picture FROM users WHERE id='${userPageId}'`;
   const sqlAdminInfos = `SELECT isAdmin FROM users WHERE id='${userId}'`;
   let adminCheckout = null;
 

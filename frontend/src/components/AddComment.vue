@@ -48,11 +48,12 @@ export default {
             fetch(url, options)
                 .then(res => res.json())
                 .then((res) => {
-                    console.log(res)
+                    //console.log(res)
                     if (res.ok) {
                         this.comment= [{}]
                     } else {
-                        alert("Commentaire envoyé ");
+                        //alert("Commentaire envoyé ");
+                        console.log("Commentaire envoyé ");
                     }
                 })
                 .then(window.location.reload())
