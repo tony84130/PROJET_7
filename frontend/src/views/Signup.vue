@@ -1,7 +1,6 @@
 
 <template>
     <main id="container">
-
         <div id="container-centraux">
             <h1 id="logo">Groupomania</h1>
             <div>Inscrivez-vous pour voir les publications de vos amis.</div>
@@ -28,7 +27,6 @@
             </form>
             <div>En vous inscrivant, vous acceptez nos Conditions générales.</div>
         </div>
-
         <div id="connection-compte">
             <div>Vous avez un compte  ? <router-link to="/login" title="signup">Connectez-vous</router-link></div>
         </div>
@@ -44,179 +42,176 @@
 </template>
 
 <script>
-export default {
-    name: 'SignupApp',
-    data() {
-        return {
-            inputSignup: {
-                prenom: "",
-                nom: "",
-                email: "",
-                password: ""
-            }
-        }
-    },
-    methods: {
-        signup() {
-            let inputDatas = {
-                "prenom": this.inputSignup.prenom,
-                "nom": this.inputSignup.nom,
-                "email": this.inputSignup.email,
-                "password": this.inputSignup.password
-            }
-            //console.log(inputDatas)
-            let url = "http://localhost:3000/api/auth/signup"
-            let options = {
-                method: "POST",
-                body: JSON.stringify(inputDatas),
-                headers: {
-                    'Content-Type': 'application/json'
+    export default {
+        name: 'SignupApp',
+        data() {
+            return {
+                inputSignup: {
+                    prenom: "",
+                    nom: "",
+                    email: "",
+                    password: ""
                 }
             }
-            //console.log(options)
-            fetch(url, options)
-                .then(res => res.json())
-                .then((res) => {
-                    /*if (res.userId && res.token){*/
-                    localStorage.setItem("userId", res.userId);
-                    localStorage.setItem("token", res.token);
-                    this.$router.push("/login");
-                    //alert("Bienvenue sur le réseau social de Groupomania, vous pouvez dès à présent vous connecter.  ");
-                    /*} */
-                })
-                .catch(error => console.log(error))
+        },
+        methods: {
+            signup() {
+                let inputDatas = {
+                    "prenom": this.inputSignup.prenom,
+                    "nom": this.inputSignup.nom,
+                    "email": this.inputSignup.email,
+                    "password": this.inputSignup.password
+                }
+                //console.log(inputDatas)
+                let url = "http://localhost:3000/api/auth/signup"
+                let options = {
+                    method: "POST",
+                    body: JSON.stringify(inputDatas),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+                //console.log(options)
+                fetch(url, options)
+                    .then(res => res.json())
+                    .then((res) => {
+                        /*if (res.userId && res.token){*/
+                        localStorage.setItem("userId", res.userId);
+                        localStorage.setItem("token", res.token);
+                        this.$router.push("/login");
+                        //alert("Bienvenue sur le réseau social de Groupomania, vous pouvez dès à présent vous connecter.  ");
+                        /*} */
+                    })
+                    .catch(error => console.log(error))
+            }
         }
     }
-}
 </script>
 
 <style scoped>
-        * {
-            margin: 0px;
-            padding: 0px;
-            box-sizing: border-box;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
+    * {
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+
+    body {
+        background-color: #EFEFEF;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    a, button {
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    p {
+        text-align: center;
+    }
+
+    label {
+        display: none;
+    }
+
+    #logo {
+        color: red;
+        margin: 30px 0px; 
+    }
+
+    #container {
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: calc(100vh - 59px);
+        margin: auto;
+    }
+
+    #container-centraux {
+        background-color: white;
+        border: 1px solid grey;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+    }
+
+    #creation-compte {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 10px;
+    }
+
+    input {
+        width: 450px;
+        height: 30px;
+        margin: 5px 0px;
+        border-radius: 5px;
+        padding: 5px;
+        border: 1px solid grey;
+        background-color: #EFEFEF;
+    }
+
+    button {
+        width: 450px;
+        height: 30px;
+        margin: 10px;
+        border-radius: 5px;
+        background-color: red;
+        color: white;
+        border: none;
+        font-weight: bold;
+    }
+    
+    #connection-compte {
+        background-color: white;
+        margin-top: 10px;
+        border: 1px solid grey;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid grey;
+    }
+
+    #connection-compte a {
+        color: blue;
+        font-weight: bold;
+    }
+
+    footer {
+        display: block;
+        width: 100%;
+    }
+
+    #container-bas {
+        display: flex;
+        justify-content: center;
+    }
+
+    #container-bas div {
+        margin: 20px;
+    }
+
+    @media screen and (max-width: 500px) {
+        #container {
+            width: 300px;
+        }
+
+        input, button {
+            width: 250px;
         }
 
         body {
-            background-color: #EFEFEF;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-size: 80%;
         }
-
-        a, button {
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        p {
-            text-align: center;
-        }
-
-        label {
-            display: none;
-        }
-
-        #logo {
-            color: red;
-            margin: 30px 0px; 
-        }
-
-        #container {
-            width: 500px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: calc(100vh - 59px);
-            margin: auto;
-        }
-
-        #container-centraux {
-            background-color: white;
-            border: 1px solid grey;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-        }
-
-        #creation-compte {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 10px;
-        }
-
-        input {
-            width: 450px;
-            height: 30px;
-            margin: 5px 0px;
-            border-radius: 5px;
-            padding: 5px;
-            border: 1px solid grey;
-            background-color: #EFEFEF;
-        }
-
-        button {
-            width: 450px;
-            height: 30px;
-            margin: 10px;
-            border-radius: 5px;
-            background-color: red;
-            color: white;
-            border: none;
-            font-weight: bold;
-        }
-        
-        #connection-compte {
-            background-color: white;
-            margin-top: 10px;
-            border: 1px solid grey;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid grey;
-        }
-
-        #connection-compte a {
-            color: blue;
-            font-weight: bold;
-        }
-
-        footer {
-            display: block;
-            width: 100%;
-            
-        }
-
-        #container-bas {
-            display: flex;
-            justify-content: center;
-        }
-
-        #container-bas div {
-            margin: 20px;
-        }
-
-        @media screen and (max-width: 500px) {
-
-            #container {
-                width: 300px;
-            }
-
-            input, button {
-                width: 250px;
-            }
-
-            body {
-                font-size: 80%;
-            }
-
-        }
+    }
 </style>

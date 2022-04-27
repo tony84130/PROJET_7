@@ -4,31 +4,28 @@
       <Nav />
       <Sugg />
       <Add />
-      <Post />
-      
+      <Post /> 
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
-
 <script>
-// @ is an alias to /src
-import Nav from "@/components/Navbar.vue";
-import Sugg from "@/components/allUsers.vue";
-import Add from "@/components/addPost.vue";
-//import Post from "@/components/allPosts.vue";
-import Post from "@/views/allPosts.vue";
+  // @ is an alias to /src
+  import Nav from "@/components/Navbar.vue";
+  import Sugg from "@/components/allUsers.vue";
+  import Add from "@/components/addPost.vue";
+  //import Post from "@/components/allPosts.vue";
+  import Post from "@/components/allPosts.vue";
 
-export default {
-  name: "Home-page",
-  components: {
-    Nav,
-    Sugg,
-    Add,
-    Post,
-    
-  },
-};
+  export default {
+    name: "Home-page",
+    components: {
+      Nav,
+      Sugg,
+      Add,
+      Post,
+    },
+  };
 </script>
 
+<style lang="scss" scoped></style>

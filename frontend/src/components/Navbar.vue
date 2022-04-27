@@ -25,178 +25,178 @@
 </template>
 
 <script>
-export default {
-    name: "List-user",
-    components: {
-    },
-    data() {
-        return {
-            user: {
-            img:true,
-            prenom: "",
-            nom: "",
-            userId: "",
-            picture: "",
-            bio: ""
-        }
-    }
-},
-    mounted() {
-        this.userId = JSON.parse(localStorage.getItem("userId"));
-        let url = `http://localhost:3000/api/auth/${this.userId}`;
-        let options = {
-            method: "GET",
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem("token"),
-            }
-        };
-        fetch(url, options)
-            .then((res) => {
-                res.json().then(data =>{
-            this.user=data;
-            this.user.picture = data[0].picture;
-            this.user.prenom = data[0].prenom;
-            this.user.nom = data[0].nom;
-            this.user.bio = data[0].bio;             
-        })
-        })
-        .catch(error => console.log(error))
-    },
-    methods: {
-        logoutSession(){
-            localStorage.clear();
-            this.$router.push("/login")
+    export default {
+        name: "List-user",
+        components: {
         },
-    },
-}
+        data() {
+            return {
+                user: {
+                    img:true,
+                    prenom: "",
+                    nom: "",
+                    userId: "",
+                    picture: "",
+                    bio: ""
+                }
+            }
+        },
+        mounted() {
+            this.userId = JSON.parse(localStorage.getItem("userId"));
+            let url = `http://localhost:3000/api/auth/${this.userId}`;
+            let options = {
+                method: "GET",
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
+                }
+            };
+            fetch(url, options)
+                .then((res) => {
+                    res.json().then(data =>{
+                this.user=data;
+                this.user.picture = data[0].picture;
+                this.user.prenom = data[0].prenom;
+                this.user.nom = data[0].nom;
+                this.user.bio = data[0].bio;             
+            })
+            })
+            .catch(error => console.log(error))
+        },
+        methods: {
+            logoutSession(){
+                localStorage.clear();
+                this.$router.push("/login")
+            },
+        },
+    }
 </script>
 
 
 <style>
-        * {
-            margin: 0px;
-            padding: 0px;
-            box-sizing: border-box;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
-        }
+    * {
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
 
-        i, a {
-            cursor: pointer;
-            color: black;
-            text-decoration: none;
-        }
+    i, a {
+        cursor: pointer;
+        color: black;
+        text-decoration: none;
+    }
 
-        nav a {
-            height: 100%;
-            display: flex;
-            align-items: center;
-        }
+    nav a {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
 
-        body {
-            background-color: #EFEFEF;
-        }
-    
+    body {
+        background-color: #EFEFEF;
+    }
+
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: white;
+        padding: 15px 30px;
+        border: 1px solid grey;
+        position: fixed;
+        width: 100%;
+        z-index: 1;
+    }
+
+    nav h1 {
+        color: red;
+    }
+
+    nav #logo-groupomania {
+        display: none;
+    }
+
+    nav #search {
+        border: 1px solid grey;
+        background-color: #EFEFEF;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
+        border-radius: 5px;
+        width: 300px;
+        height: 30px;
+    }
+
+    nav input {
+        background-color: #EFEFEF;
+        border: none;
+        width: 100%;
+        height: 100%;
+        padding: 5px 10px;
+    }
+
+    nav #nav-droite {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    nav #nav-droite i {
+        margin: 10px;
+    }
+
+    .accountbutton {
+        background-color: transparent;
+        display: flex;
+    }
+
+    #iconOff {
+        position: relative;
+        top: 2px;
+        border: none;
+    }
+
+    nav #photo-profil-nav {
+        width: 20px;
+        height: 20px;
+        margin: 10px;
+    }
+
+    nav #photo-profil-nav img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 200px;
+    }
+
+    @media screen and (max-width: 750px) {
         nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: white;
-            padding: 15px 30px;
-            border: 1px solid grey;
-            position: fixed;
-            width: 100%;
-            z-index: 1;
-        }
-
-        nav h1 {
-            color: red;
+            padding: 10px 15px;
         }
 
         nav #logo-groupomania {
+            display: block;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        nav #logo-groupomania img {
+            height: 40px;
+        }
+
+        h1 {
             display: none;
         }
 
-        nav #search {
-            border: 1px solid grey;
-            background-color: #EFEFEF;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 5px;
-            border-radius: 5px;
-            width: 300px;
-            height: 30px;
+        #search {
+            width: 200px;
         }
+    }
 
-        nav input {
-            background-color: #EFEFEF;
-            border: none;
-            width: 100%;
-            height: 100%;
-            padding: 5px 10px;
+    @media screen and (max-width: 450px) {
+        nav #logo-groupomania {
+            margin-right: 5px;
         }
-
-        nav #nav-droite {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        nav #nav-droite i {
-            margin: 10px;
-        }
-
-        .accountbutton {
-            background-color: transparent;
-            display: flex;
-        }
-
-        #iconOff {
-            position: relative;
-            top: 2px;
-            border: none;
-        }
-
-        nav #photo-profil-nav {
-            width: 20px;
-            height: 20px;
-            margin: 10px;
-        }
-
-        nav #photo-profil-nav img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 200px;
-        }
-
-        @media screen and (max-width: 750px) {
-            nav {
-                padding: 10px 15px;
-            }
-
-            nav #logo-groupomania {
-                display: block;
-                height: 40px;
-                margin-right: 10px;
-            }
-
-            nav #logo-groupomania img {
-                height: 40px;
-            }
-
-            h1 {
-                display: none;
-            }
-
-            #search {
-                width: 200px;
-            }
-        }
-
-        @media screen and (max-width: 450px) {
-            nav #logo-groupomania {
-                margin-right: 5px;
-            }
-        }
+    }
 </style>

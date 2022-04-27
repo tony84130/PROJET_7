@@ -7,17 +7,17 @@
   </div>
 </template>
 
-<style lang="scss" scoped></style>
-
 <script>
-// @ is an alias to /src
-import Nav from "@/components/Navbar.vue";
-import Post from "@/components/Post-liked.vue";
-export default {
-  name: "Profil-page",
-  components: {
-    Nav,
-    Post,
-  },
-};
+  // @ is an alias to /src
+  import Nav from "@/components/Navbar.vue";
+  import Post from "@/components/Post-liked.vue";
+  export default {
+    name: "Profil-page",
+    components: {
+      Nav,
+      Post,
+    },
+  };
 </script>
+
+<style lang="scss" scoped></style>

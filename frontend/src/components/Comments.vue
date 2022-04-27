@@ -1,5 +1,3 @@
-
-
 <template>
     <div v-for="comment in comment" :key="comment.id" id="comment">
         <div id="user-comment">
@@ -18,20 +16,11 @@
 </template>
 
 <script>
-//import Pseudo from '../components/test-Pseudo.vue'
 export default {
     name: "ListComments",
     props : {
         parentPost: Number,
     },
-    /*
-    components: {
-        Pseudo,
-        Likes,
-        Comments,
-        AddComment
-    },
-    */
     data() {
         return {
             userId: "",
@@ -52,7 +41,6 @@ export default {
         }
     },
     beforeCreate() {
-        
         let url = `http://localhost:3000/api/post/get-comment/${this.parentPost}`;
         let options = {
             method: "GET",
@@ -85,31 +73,9 @@ export default {
                 })
             })
             .catch(error => console.log(error)) 
-
-
     },
     methods: {
-        //addComment(id_comment) {
-        addComment() {
-            
-            //let url = "http://localhost:3000/api/post/comment/" + id_comment;
-            let url = "http://localhost:3000/api/post/comment/1";
-            let options = {
-                method: "POST",
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
-                }
-            };
-            fetch(url, options)
-                .then((response) => {
-                    console.log(response);
-                    window.location.reload();
-                })
-                .catch(error => console.log(error))
-        },
-        
         deleteComment(id_comment) {
-            
             let url = "http://localhost:3000/api/post/delete-comment/" + id_comment;
             let options = {
                 method: "DELETE",
@@ -117,35 +83,20 @@ export default {
                     'Authorization': 'Bearer ' + localStorage.getItem("token"),
                 }
             };
-            fetch(url, options)
-                .then((response) => {
-                    console.log(response);
-                    //window.location.reload();
-                    alert("Commentaire supprimé !");
-                    location.reload();
-                })
-                .catch(error => console.log(error))
-        },
-        
-        /*
-        deleteComment(commentId) {
-            if (confirm("êtes vous sûr de vouloir supprimer ce commentaire ?")) {
-                fetch(`http://localhost:3000/api/post/delete-comment/${(commentId)}`, {
-                    method: 'DELETE',
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    } 
-                })
+            if (confirm("Êtes vous sûr de vouloir supprimer ce commentaire ?")) {
+                fetch(url, options)
+                    .then((response) => {
+                        console.log(response);
+                        //window.location.reload();
+                        //console.log("Commentaire supprimé !");
+                        location.reload();
+                    })
                     .catch(error => console.log(error))
-                this.$emit('deleted', commentId)
-                location.reload();
-            }   
+            }
         },
-        */
     },
 }
 </script>
-
 
 <style>
     #bouton-poubelle {

@@ -1,7 +1,4 @@
-
-
 <template>
-
     <div id="container-other">
         <div id="container-user">
             <img id="photo-profil" v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
@@ -21,141 +18,121 @@
                 </div>
             </div>
             <div id="bio-user">
-                <div>{{ user.bio }}</div>
+                <div v-if="user.bio != null && user.bio.length >1 ">{{ user.bio }}</div>
             </div>
         </div>
     </div>
-
-    
 </template>
 
-
-
 <script>
-/*
-let idPage = function getId() {
-    return new URLSearchParams(window.location.search).get("id");
-}
-console.log(idPage());
-*/
-
-export default {
-    name: "List-user",
-    components: {
-        //CommentPost,
-        //PreferButton,
-        //BlocComment
-    },
-    //props: ['id'],
-    data() {
-        return {
-            user1: {
-                img:true,
-                prenom: "",
-                nom: "",
-                userId: "",
-                picture: "",
-                bio: "",
-                isAdmin: "",
-                id: ""
-            },
-            user: {
-                img:true,
-                prenom: "",
-                nom: "",
-                picture: "",
-                bio: "",
-                isAdmin: "",
-                id: ""
+    export default {
+        name: "List-user",
+        data() {
+            return {
+                user1: {
+                    img:true,
+                    prenom: "",
+                    nom: "",
+                    userId: "",
+                    picture: "",
+                    bio: "",
+                    isAdmin: "",
+                    id: ""
+                },
+                user: {
+                    img:true,
+                    prenom: "",
+                    nom: "",
+                    picture: "",
+                    bio: "",
+                    isAdmin: "",
+                    id: ""
+                }
             }
-        }
-    },
-    beforeCreate() {
-        this.userId = JSON.parse(localStorage.getItem("userId"));
-        let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
-        let optionsUser = {
-            method: "GET",
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem("token"),
-            }
-        };
-        fetch(urlUser, optionsUser)
-            .then((res) => {
-                res.json().then(data =>{
-                    this.user1 = data[0];
-                    this.user1.id = data[0].id;
-                    this.user1.isAdmin = data[0].isAdmin;
-                    this.user1.bio = data[0].bio;
-                    //console.log(res)
+        },
+        beforeCreate() {
+            this.userId = JSON.parse(localStorage.getItem("userId"));
+            let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
+            let optionsUser = {
+                method: "GET",
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
+                }
+            };
+            fetch(urlUser, optionsUser)
+                .then((res) => {
+                    res.json().then(data =>{
+                        this.user1 = data[0];
+                        this.user1.id = data[0].id;
+                        this.user1.isAdmin = data[0].isAdmin;
+                        this.user1.bio = data[0].bio;
+                        //console.log(res)
+                    })
                 })
-            })
-            .catch(error => console.log(error)) 
-
-    },
-    created() {
-        const parsedUrl = new URL(window.location.href)
-        const userPageId = parsedUrl.pathname.split('/user/')[1]
-        this.userId = JSON.parse(localStorage.getItem("userId"));
-        //let url = `http://localhost:3000/api/auth/${['id']}`;
-        //let url = `http://localhost:3000/api/auth/${idPage()}`;
-        let url = `http://localhost:3000/api/auth/${userPageId}`;
-        let options = {
-            method: "GET",
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem("token"),
-            }
-        };
-        fetch(url, options)
-            .then((res) => {
-                res.json().then(data =>{
-            this.user=data;
-            this.user.picture = data[0].picture;
-            this.user.prenom = data[0].prenom;
-            this.user.nom = data[0].nom;
-            this.user.bio = data[0].bio;  
-            this.user.id = data[0].id;
-            if (this.user1.id == this.user.id) {
-                this.$router.push("/profil")
-            }            
-        })
-        })
-        .catch(error => console.log(error))
-
-        
-    },
-    methods: {
-        deleteAccount() {
+                .catch(error => console.log(error)) 
+        },
+        created() {
             const parsedUrl = new URL(window.location.href)
             const userPageId = parsedUrl.pathname.split('/user/')[1]
+            this.userId = JSON.parse(localStorage.getItem("userId"));
+            //let url = `http://localhost:3000/api/auth/${['id']}`;
+            //let url = `http://localhost:3000/api/auth/${idPage()}`;
             let url = `http://localhost:3000/api/auth/${userPageId}`;
             let options = {
-                method: "DELETE",
+                method: "GET",
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem("token"),
                 }
             };
             fetch(url, options)
-                .then((response) => {
-                    console.log(response);
-                    alert("Compte supprimé !");
+                .then((res) => {
+                    res.json().then(data =>{
+                        this.user=data;
+                        this.user.picture = data[0].picture;
+                        this.user.prenom = data[0].prenom;
+                        this.user.nom = data[0].nom;
+                        this.user.bio = data[0].bio;  
+                        this.user.id = data[0].id;
+                        if (this.user1.id == this.user.id) {
+                            this.$router.push("/profil")
+                        }            
+                    })
                 })
-                .then(this.$router.push("/"))
                 .catch(error => console.log(error))
         },
-        afficher() {
-            let hidden = document.getElementById("annuler-confirmer")
-            hidden.style.display = "flex";
-            let hidden3 = document.getElementById("afficher")
-            hidden3.style.display = "none";
+        methods: {
+            deleteAccount() {
+                const parsedUrl = new URL(window.location.href)
+                const userPageId = parsedUrl.pathname.split('/user/')[1]
+                let url = `http://localhost:3000/api/auth/${userPageId}`;
+                let options = {
+                    method: "DELETE",
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem("token"),
+                    }
+                };
+                fetch(url, options)
+                    .then((response) => {
+                        console.log(response);
+                        alert("Compte supprimé !");
+                    })
+                    .then(this.$router.push("/"))
+                    .catch(error => console.log(error))
+            },
+            afficher() {
+                let hidden = document.getElementById("annuler-confirmer")
+                hidden.style.display = "flex";
+                let hidden3 = document.getElementById("afficher")
+                hidden3.style.display = "none";
+            },
+            annuler() {
+                let hidden = document.getElementById("annuler-confirmer")
+                hidden.style.display = "none";
+                let hidden3 = document.getElementById("afficher")
+                hidden3.style.display = "block";
+            }
         },
-        annuler() {
-            let hidden = document.getElementById("annuler-confirmer")
-            hidden.style.display = "none";
-            let hidden3 = document.getElementById("afficher")
-            hidden3.style.display = "block";
-        }
-    },
-}
+    }
 
 </script>
 
@@ -224,7 +201,6 @@ export default {
             display: flex;
             justify-content: center;
             margin: 10px 0px 40px 0px;
-            cursor: pointer;
             text-align: center;
         }
 
@@ -238,6 +214,12 @@ export default {
             background-color: white;
             font-weight: bold;
             margin: 0px 10px;
+        }
+
+        #container-other #modif-and-delete-user #afficher {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
         }
 
         #container-other #modif-and-delete-user i {
@@ -257,6 +239,7 @@ export default {
         #container-other #modif-and-delete-user #annuler-confirmer div button {
             padding: 10px;
             font-weight: bold;
+            cursor: pointer;
         }
 
         #container-other #bio-user div {

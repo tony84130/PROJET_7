@@ -1,13 +1,10 @@
-
 <template>
-
     <div id="container-centraux">
         <form id="add-post" @submit.prevent="createPost">
             <div id="titre-add-post">Créer une nouvelle publication</div>
             <div id="message">
                 <input type="text" name="textarea" placeholder="votre texte ici ..." v-model="message">
             </div>
-        
             <div id="preview" v-if="preview">
                 <img :src="preview" :alt="preview">
             </div>         
@@ -16,287 +13,180 @@
                 <!-- <input type="submit" value="Envoyer" class="btn"> -->
                 <button type="submit">Envoyer</button>
             </div>
-        
             <p>{{ errMsg }}</p>
         </form>
-
-
-
-
-<!--
-            <form id="add-post">
-                <div id="titre-add-post">Créer une nouvelle publication</div>
-                <div>
-                    <label for="text">Contenu du post :</label>
-                    <input type="text" id="text" maxlength="500" name="message" placeholder="votre texte ici ..." requireed v-model="inputPost.message">
-                    
-                </div>
-                <div id="fichier-boutton">
-                    <label for="avatar"></label>
-                    <input type="file" id="avatar" name="avatar" accept="image/png, image/jpg, image/jpeg">
-
-                    <div class="form"> 🤗🤗🤗
-                        <input id="image" type="file" name="image" @change="handleFileUpload($event)" required capture>
-                    </div>
-                    
-                    <button @click="sendPost">Envoyer</button>
-                </div>
-            </form>
--->
-
-
     </div>
-
-
 </template>
 
-
 <script>
-
-import axios from 'axios';
-export default {
-    name: 'CreatePost',
-    data() {
-        return {
-            message: null,
-            file: '',
-            preview: null,
-            errMsg: null
-        }
-    },
-    methods: {
-        selectFile(event) {
-            /* sur le onchange on va attribuer cette valeur à file (nécessaire pour l'envoi au backend) */
-            this.file = this.$refs.file.files[0]
-            let input = event.target
-            if(input.files) {
-                let reader = new FileReader()
-                reader.onload = (e) => {
-                    this.preview = e.target.result
-                }
-                reader.readAsDataURL(input.files[0])
+    import axios from 'axios';
+    export default {
+        name: 'CreatePost',
+        data() {
+            return {
+                message: null,
+                file: '',
+                preview: null,
+                errMsg: null
             }
         },
-        createPost() {
-            /* on peut envoyer un post sans image mais il faut au moins qu'il y est un texte */     
-            if (!this.message && !this.file) {
-                this.errMsg = "Vous devez remplir le champ texte ou importer une photo pour créer une nouvelle publication!"
-                return
+        methods: {
+            selectFile(event) {
+                /* sur le onchange on va attribuer cette valeur à file (nécessaire pour l'envoi au backend) */
+                this.file = this.$refs.file.files[0]
+                let input = event.target
+                if(input.files) {
+                    let reader = new FileReader()
+                    reader.onload = (e) => {
+                        this.preview = e.target.result
+                    }
+                    reader.readAsDataURL(input.files[0])
+                }
+            },
+            createPost() {
+                /* on peut envoyer un post sans image mais il faut au moins qu'il y est un texte */     
+                if (!this.message && !this.file) {
+                    this.errMsg = "Vous devez remplir le champ texte ou importer une photo pour créer une nouvelle publication!"
+                    return
+                }
+                /* on créé un objet formData afin de pouvoir ajouter le texte et surtout le file choisi */
+                let formData = new FormData()
+                formData.append('message', this.message)
+                formData.append('image', this.file)
+                formData.append('userId', localStorage.getItem('userId'))
+                /* envoi du form via axios.put de l'objet formData */
+                axios.post('http://localhost:3000/api/post/', formData, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    },
+                })  
+                    .then(res => this.$emit('add-Post', res.data), console.log("Post envoyé !")/*(window.location.reload())*/)
+                    //.then(window.location.reload())
+                    .catch(error => console.log(error))
+                /* on emit le toggle-Create pour cacher ce composant tout en effaçant les inputs */
+                this.$emit('toggle-Create')
+                this.message = ''
+                this.file = ''
+                this.preview = ''
+                document.querySelector('form').reset()           
             }
-            /* on créé un objet formData afin de pouvoir ajouter le texte et surtout le file choisi */
-            let formData = new FormData()
-            formData.append('message', this.message)
-            formData.append('image', this.file)
-            formData.append('userId', localStorage.getItem('userId'))
-            /* envoi du form via axios.put de l'objet formData */
-            axios.post('http://localhost:3000/api/post/', formData, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                },
-            })  
-                .then(res => this.$emit('add-Post', res.data), console.log("Post envoyé !")/*(window.location.reload())*/)
-                //.then(window.location.reload())
-                .catch(error => console.log(error))
-            /* on emit le toggle-Create pour cacher ce composant tout en effaçant les inputs */
-            this.$emit('toggle-Create')
-            this.message = ''
-            this.file = ''
-            this.preview = ''
-            document.querySelector('form').reset()           
         }
     }
-}
-
-
-
-
-/*
-const axios = require('axios').default;
-export default {
-    name: 'addPost',
-    data() {
-        return {
-            inputPost: {
-                message: "",
-                posterId: ""
-            }
-        }
-    },
-    methods: {
-        sendPost() {
-             
-            let post = {
-                "message": this.inputPost.message,
-                "posterId": localStorage.getItem("userId"),
-                
-            }
-            let url = "http://localhost:3000/api/post/"
-            let options = {
-                method: "POST",
-                body: JSON.stringify(post),
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
-                    'Content-Type': 'application/json'
-                }
-            }
-            fetch(url, options)
-                .then((res) => {
-                    if (res.ok) {
-                    res.json().then(result =>{
-                      if(this.file){
-                            this.sendFile(result.picturePost);
-                        }
-                    })
-                    
-                window.location.reload();
-                    this.inputMessage = {} // Retour à 0 des inputs //
-                } else {
-                    //alert("Post publié avec succès !");
-                    console.log("Post publié avec succès !");
-                }
-                })
-                    .then(this.$router.push("/"))
-                    .catch(error => console.log(error))  
-        },
-        sendFile(picturePost){
-            let formData = new FormData();
-            formData.append('image', this.file);
-            axios.post( 'http://localhost:3000/api/post/' + picturePost, formData, {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
-                    'Content-Type': 'multipart/form-data',
-                }
-            }).then(function(){
-                console.log('SUCCESS!!');
-            })
-            .catch(function(err){
-                console.log(err);
-                console.log('FAILURE!!');
-            });
-        },
-       
-        handleFileUpload(event){
-            this.file = event.target.files[0];
-        }  
-    }
-}
-*/
 </script>
 
 
 <style scoped>
-        * {
-            margin: 0px;
-            padding: 0px;
-            box-sizing: border-box;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
-        }
+    * {
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
 
-        i, a {
-            cursor: pointer;
-            color: black;
-            text-decoration: none;
-        }
+    i, a {
+        cursor: pointer;
+        color: black;
+        text-decoration: none;
+    }
 
-        a {
-            height: 100%;
-            display: flex;
-            align-items: center;
-        }
+    a {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
 
-        body {
-            background-color: #EFEFEF;
-        }
+    body {
+        background-color: #EFEFEF;
+    }
 
-        #add-post {
-            border: 2px solid grey;
-            border-radius: 10px;
-            background-color: white;
-            margin-bottom: 15px;
-        }
+    #add-post {
+        border: 2px solid grey;
+        border-radius: 10px;
+        background-color: white;
+        margin-bottom: 15px;
+    }
 
-        #titre-add-post {
-            padding: 10px;
-            font-weight: bold;
-        }
+    #titre-add-post {
+        padding: 10px;
+        font-weight: bold;
+    }
 
-        input[type="text"] {
-            border-top: 1px solid grey;
-            border-bottom: 1px solid grey;
-            padding: 10px 20px;
-            width: 100%;
-        }
+    input[type="text"] {
+        border-top: 1px solid grey;
+        border-bottom: 1px solid grey;
+        padding: 10px 20px;
+        width: 100%;
+    }
 
-        #fichier-boutton {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 10px;
-            background-color: white;
-            border: 1px solid grey;
-        }
+    #fichier-boutton {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 10px;
+        background-color: white;
+        border: 1px solid grey;
+    }
 
-        #add-post label {
-            display: none;
-        }
+    #add-post label {
+        display: none;
+    }
 
-        #add-post input {
-            background-color: white;
-            width: 100%;
-        }
+    #add-post input {
+        background-color: white;
+        width: 100%;
+    }
 
-        input {
-            border: none;
-            height: 100%;
-            padding: 5px 10px;
-        }
+    input {
+        border: none;
+        height: 100%;
+        padding: 5px 10px;
+    }
 
+    
+
+    #message {
         
+    }
 
-        #message {
-            
-        }
+    input[type="file"] {
+        
+    }
 
-        input[type="file"] {
-            
-        }
+    #preview {
+        border: 1px solid grey;
+        width: 100%;
+    }
 
-        #preview {
-            border: 1px solid grey;
-            width: 100%;
-        }
+    #preview img {
+        width: 100%;
+        object-fit: contain;
+        max-height: 400px;
+    }
 
-        #preview img {
-            width: 100%;
-            object-fit: contain;
-            max-height: 400px;
-        }
+    #btns {
+        display: flex;
+        padding: 5px;
+    }
 
-        #btns {
-            display: flex;
-            padding: 5px;
-        }
+    input[type="submit"] {
+        padding: 5px;
+        background-color: #EFEFEF;
+        border: 1px solid grey;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        input[type="submit"] {
-            padding: 5px;
-            background-color: #EFEFEF;
-            border: 1px solid grey;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    button {
+        padding: 5px;
+        background-color: #EFEFEF;
+        border: 1px solid grey;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        button {
-            padding: 5px;
-            background-color: #EFEFEF;
-            border: 1px solid grey;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        #add-post p {
-            color: red;
-            padding: 0px 10px;
-        }
-         
+    #add-post p {
+        color: red;
+        padding: 0px 10px;
+    }
 </style>
