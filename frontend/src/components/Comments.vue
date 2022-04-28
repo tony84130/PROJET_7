@@ -41,6 +41,7 @@ export default {
         }
     },
     beforeCreate() {
+        // Récupération des commentaires pour chaque publication
         let url = `http://localhost:3000/api/post/get-comment/${this.parentPost}`;
         let options = {
             method: "GET",
@@ -58,6 +59,7 @@ export default {
             .catch(error => console.log(error))
     },
     mounted() {
+        // Récupération des informations de l'utilisateur connecté pour savoir si il est administrateur
         this.userId = JSON.parse(localStorage.getItem("userId"));
         let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
         let optionsUser = {
@@ -75,6 +77,7 @@ export default {
             .catch(error => console.log(error)) 
     },
     methods: {
+        // Fonction pour pouvoir supprimer un commentaire
         deleteComment(id_comment) {
             let url = "http://localhost:3000/api/post/delete-comment/" + id_comment;
             let options = {
@@ -83,6 +86,7 @@ export default {
                     'Authorization': 'Bearer ' + localStorage.getItem("token"),
                 }
             };
+            // Confirmation de suppression d'un commentaire
             if (confirm("Êtes vous sûr de vouloir supprimer ce commentaire ?")) {
                 fetch(url, options)
                     .then((response) => {

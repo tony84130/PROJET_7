@@ -7,7 +7,6 @@ const crypto = require('crypto');
 // Importation des modules bcrypt et jsonwebtoken
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 require('dotenv').config();
 
 // Constante pour la création du token
@@ -33,24 +32,16 @@ exports.signUp = (req, res, next) => {
   //let query = db.query(sql, email, pseudo, async (err, docs) => {
 
   let query = db.query(sql, email, async (err, docs) => {
-    console.log("erreur ici :" + docs)
+    //console.log(docs.length >= 1)
     if (err) throw err;
 
     if (!email || !password || !prenom || !nom ) {
       return res.status(400).json({ error: "Veuillez remplir toutes les informations demandées !" });
     }
+    
     if (docs.length >= 1) {
       return res.status(400).json({ error: "Utilisateur déja existant !" });
     }
-    
-    /*
-    let query = db.query(sqlPseudo, pseudo, async (err, docs) => {
-      if (err) throw err;
-      if (docs.length >= 1) {
-        return res.status(400).json({ error: "Pseudo déja existant !" });
-      }
-    });
-    */
     
     if (password.length <= 8) {
       return res.status(400).json({
@@ -71,7 +62,7 @@ exports.signUp = (req, res, next) => {
           let sql = "INSERT INTO users SET ?";
           let query = db.query(sql, newUser, (err, docs) => {
             if (err) throw err;
-            console.log(docs);
+            //console.log(docs);
             res.status(201).json({ message: "Utilisateur créé!" });
           });
         })

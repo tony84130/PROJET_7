@@ -1,25 +1,19 @@
 <template>
-    <div id="container-centraux" class="bloc">
+    <div id="container-centraux-liked" class="bloc">
 
     <!-- Liste des posts -->   
       <div v-for="post in post" id="post" :key="post.id" class="bloclist">
+
             <div id="first-line">
                 <div id="user-info">
-                    <img src="../assets/IDphoto.png" alt="photo user">
-                    <div>{{ post.user_id }}</div>
-                    <div> -:- </div>
-                    <div>{{ post.post_id }}</div>
                     <Pseudo :parentPost="post.user_id"/>
                 </div>
-                <button v-if="post.posterId" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
+                <!-- <button v-if="post.posterId == this.userId || users.isAdmin == 1" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button> -->
+                <!-- <button v-if="post.posterId == this.userId || users.isAdmin == 1" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button> -->
             </div>
-            <div id="photo-post">
-                <a href="">
-                    <img v-if="post.picturePost != null" :src="post.picturePost" :key="post.picturePost" alt="post user">
-                </a>
-            </div>
-            <div id="texte-post">{{ post.message }}</div>
             
+            <Post :parentPost="post.post_id"/>
+
             <Likes :parentPost="post.post_id"/>
             <Comments :parentPost="post.post_id"/>
             <AddComment :parentPost="post.post_id"/>
@@ -31,6 +25,8 @@
 </template>
 
 <script>
+    // Importation de ...
+    import Post from '../components/publication-test.vue'
     import Pseudo from '../components/Pseudo.vue'
     import Likes from '../components/Likes.vue'
     import Comments from '../components/Comments.vue'
@@ -38,6 +34,7 @@
     export default {
         name: "ListPost",
         components: {
+            Post,
             Pseudo,
             Likes,
             Comments,
@@ -121,7 +118,7 @@
         padding-top: 80px;
     }
 
-    #container-centraux {
+    #container-centraux-liked {
         width: 700px;
         display: flex;
         flex-direction: column;
@@ -129,7 +126,7 @@
         padding-top: 100px;
     }
 
-    #container-centraux > div {
+    #container-centraux-liked > div {
         margin: 0px 0px 15px 0px;
     }
 
@@ -259,7 +256,7 @@
 
 
     @media screen and (max-width: 1300px) {
-        #container-centraux {
+        #container-centraux-liked {
             left: -150px;
         }
     }
@@ -271,14 +268,14 @@
             align-items: center;
         }
 
-        #container-centraux {
+        #container-centraux-liked {
             left: 0px;
         }
         
     }
 
     @media screen and (max-width: 750px) {
-        #container-centraux {
+        #container-centraux-liked {
             width: 500px;
         }
 
@@ -290,13 +287,13 @@
     }
 
     @media screen and (max-width: 550px) {
-        #container-centraux {
+        #container-centraux-liked {
             width: 400px;
         }
     }
 
     @media screen and (max-width: 450px) {
-        #container-centraux {
+        #container-centraux-liked {
             width: 300px;
         }
     }

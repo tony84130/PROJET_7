@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  // @ is an alias to /src
+  // Récupération des composants qui vont créer la page des posts likés par l'utilisateur
   import Nav from "@/components/Navbar.vue";
   import Post from "@/components/Post-liked.vue";
   export default {

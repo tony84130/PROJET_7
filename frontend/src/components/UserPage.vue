@@ -51,6 +51,7 @@
             }
         },
         beforeCreate() {
+            // Récupération des informations de l'utilisateur connecté pour savoir si il est administrateur
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
             let optionsUser = {
@@ -72,6 +73,7 @@
                 .catch(error => console.log(error)) 
         },
         created() {
+            // Récupération des informations d'un utilisateur pour les afficher sur la page de profil
             const parsedUrl = new URL(window.location.href)
             const userPageId = parsedUrl.pathname.split('/user/')[1]
             this.userId = JSON.parse(localStorage.getItem("userId"));
@@ -101,6 +103,7 @@
                 .catch(error => console.log(error))
         },
         methods: {
+            // Fonction pour supprimer l'utilisiteur
             deleteAccount() {
                 const parsedUrl = new URL(window.location.href)
                 const userPageId = parsedUrl.pathname.split('/user/')[1]
@@ -119,12 +122,16 @@
                     .then(this.$router.push("/"))
                     .catch(error => console.log(error))
             },
+            
+            // Fonction pour afficher le bouton de suppression de l'utilisateur
             afficher() {
                 let hidden = document.getElementById("annuler-confirmer")
                 hidden.style.display = "flex";
                 let hidden3 = document.getElementById("afficher")
                 hidden3.style.display = "none";
             },
+
+            // Fonction pour annuler la suppression de l'utilisateur
             annuler() {
                 let hidden = document.getElementById("annuler-confirmer")
                 hidden.style.display = "none";
@@ -136,10 +143,7 @@
 
 </script>
 
-
-
 <style>
-
         * {
             margin: 0px;
             padding: 0px;
@@ -191,7 +195,6 @@
 
         #container-other #container-secondaire {
             margin: auto;
-            
             width: 700px;
             display: flex;
             flex-direction: column;
@@ -228,12 +231,10 @@
 
         #container-other #modif-and-delete-user #annuler-confirmer {
             display: none;
-
         }
 
         #container-other #modif-and-delete-user #annuler-confirmer div {
             margin: 10px;
-            
         }
 
         #container-other #modif-and-delete-user #annuler-confirmer div button {
@@ -266,7 +267,6 @@
             #container-other #post {
                 width: 370px;
             }
-            
         }
 
         @media screen and (max-width: 850px) {
@@ -277,7 +277,6 @@
             #container-other #container-secondaire {
                 width: 400px;
             }
-
         }
 
         @media screen and (max-width: 700px) {
@@ -288,8 +287,6 @@
                 width: 500px;
             }
         }
-
-
 
         @media screen and (max-width: 500px) {
             #container-other {

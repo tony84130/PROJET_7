@@ -29,11 +29,13 @@
 </template>
 
 <script>
+    // Importation des composants Pseudo, Likes, Comments, AddComment et du router
     import Pseudo from '../components/Pseudo.vue'
     import Likes from '../components/Likes.vue'
     import Comments from '../components/Comments.vue'
     import AddComment from '../components/AddComment.vue'
     import router from '../router'
+
     export default {
         name: "ListPost",
         components: {
@@ -54,6 +56,7 @@
             }
         },
         mounted() {
+            // Récupération des posts de l'utilisateur connecté
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let url = `http://localhost:3000/api/post/user/${this.userId}`;
             let options = {
@@ -71,6 +74,7 @@
                 .catch(error => console.log(error))
         },
         methods: {
+            // Fonction pour supprimer une publication
             deleteMessage(id_post) {
                 this.userId = JSON.parse(localStorage.getItem("userId"));
                 let url = "http://localhost:3000/api/post/" + id_post;
@@ -80,13 +84,18 @@
                         'Authorization': 'Bearer ' + localStorage.getItem("token"),
                     }
                 };
-                fetch(url, options)
-                    .then((response) => {
-                        console.log(response);
-                        window.location.reload();
-                    })
-                    .catch(error => console.log(error))
+                // Confirmation de suppression d'une publication
+                if (confirm("Êtes vous sûr de vouloir supprimer ce post ?")) {
+                    fetch(url, options)
+                        .then((response) => {
+                            console.log(response);
+                            window.location.reload();
+                        })
+                        .catch(error => console.log(error))
+                }
             },
+            
+            // Fonction pour se rendre sur la page de modification d'une publication
             modifPost(id) {
                 router.push({ path: `/publication/${id}` })
             },

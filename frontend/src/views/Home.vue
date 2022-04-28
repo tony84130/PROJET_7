@@ -10,11 +10,10 @@
 </template>
 
 <script>
-  // @ is an alias to /src
+  // Récupération des composants qui vont créer la page d'acceuil
   import Nav from "@/components/Navbar.vue";
   import Sugg from "@/components/allUsers.vue";
   import Add from "@/components/addPost.vue";
-  //import Post from "@/components/allPosts.vue";
   import Post from "@/components/allPosts.vue";
 
   export default {

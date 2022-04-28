@@ -27,12 +27,13 @@
 </template>
 
 <script>
+    // Importation des composants Pseudo, Likes, Comments, AddComment et du router
     import Pseudo from '../components/Pseudo.vue'
     import Likes from '../components/Likes.vue'
     import Comments from '../components/Comments.vue'
     import AddComment from '../components/AddComment.vue'
-    import axios from 'axios';
     import router from '../router'
+
     export default {
         name: "ListPost",
         components: {
@@ -62,6 +63,7 @@
             }
         },
         beforeCreate() {
+            // Récupération des posts de tous les utilisateurs
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let url = "http://localhost:3000/api/post";
             let options = {
@@ -81,6 +83,7 @@
                 .catch(error => console.log(error))
         },  
         created() {
+            // Récupération des informations de l'utilisateur connecté pour savoir si il est administrateur
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
             let optionsUser = {
@@ -98,6 +101,7 @@
                 .catch(error => console.log(error)) 
         },
         methods: {
+            // Fonction pour supprimer une publication
             deletePost(id_post) {
                 this.userId = JSON.parse(localStorage.getItem("userId"));
                 let url = "http://localhost:3000/api/post/" + id_post;
@@ -107,6 +111,7 @@
                         'Authorization': 'Bearer ' + localStorage.getItem("token"),
                     }
                 };
+                // Confirmation de suppression d'une publication
                 if (confirm("Êtes vous sûr de vouloir supprimer ce post ?")) {
                     fetch(url, options)
                         .then((response) => {
@@ -117,32 +122,11 @@
                         .catch(error => console.log(error))
                 }
             },
+
+            // Fonction pour se rendre sur la page de modification d'une publication
             modifPost(id) {
                 router.push({ path: `/publication/${id}` })
             },
-            async modifyPost(id_post) {
-                /* on peut envoyer un post sans image mais il faut au moins qu'il y est un texte */     
-                if (!this.post.message) {
-                    this.errMsg = "Error => vous devez remplir le champ <message> pour créer une nouvelle publication!"
-                    return
-                }
-                /* on créé un objet formData afin de pouvoir ajouter le texte et surtout le file choisi */
-                let formData = new FormData()
-                formData.append('message', this.post.message)
-                if (this.post.newFile) {
-                    formData.append('image', this.post.newFile)
-                }
-                /* envoi du form via axios.put de l'objet formData */
-                if (confirm("êtes vous sûr de vouloir modifier votre post ?")) {
-                    axios.put(`http://localhost:3000/api/post/7${id_post}`, formData, {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                        },
-                    })  
-                        .then(res => this.$emit('add-Post', res.data), (window.location.reload()))
-                        .catch(error => console.log(error))
-                }
-            }
         },
     }
 </script>
@@ -184,7 +168,7 @@
         margin: 0px 0px 30px 0px;
     }
 
-    #post {
+    #container-centraux #post {
         border: 2px solid grey;
         background-color: white;
         border-radius: 10px;
@@ -194,7 +178,7 @@
         box-shadow: 0px 0px 10px black;;
     }
 
-    #first-line {
+    #container-centraux #first-line {
         border-radius: 10px 10px 0px 0px;
         display: flex;
         height: 60px;
@@ -214,7 +198,7 @@
     #user-info img {
         height: 100%;
         margin-right: 5px;
-        width: 40px;
+        width: 50px;
         object-fit: cover;
     }
 
@@ -302,7 +286,7 @@
 
     #user-comment img {
         height: 50px;
-        width: 40px;
+        width: 50px;
         object-fit: cover;
         margin-right: 5px;
     }
@@ -349,7 +333,7 @@
 
     @media screen and (max-width: 750px) {
         #container-centraux {
-            width: 500px;
+            width: 90%;
         }
 
         #photo-post img {
@@ -364,9 +348,7 @@
     }
 
     @media screen and (max-width: 550px) {
-        #container-centraux {
-            width: 400px;
-        }
+        
 
         #photo-post img {
             height: 250px;
@@ -374,9 +356,7 @@
     }
 
     @media screen and (max-width: 450px) {
-        #container-centraux {
-            width: 300px;
-        }
+        
 
         #photo-post img {
             height: 200px;

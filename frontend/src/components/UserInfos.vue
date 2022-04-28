@@ -34,7 +34,7 @@
                 <input v-else type="text" name="textarea" placeholder="votre texte ici ..." >             
                 <button type="submit">Envoyer</button>
             </form>
-            <form id="fileUser" @submit.prevent="modifyPost">
+            <form id="fileUser" @submit.prevent="modifyPicture">
                 <div id="preview" v-if="preview">
                     <img :src="preview" :alt="preview">
                 </div>         
@@ -55,7 +55,9 @@
 </template>
 
 <script>
+    // Importation de axios
     import axios from 'axios';
+    
     export default {
         name: "List-user",
         data() {
@@ -76,6 +78,7 @@
             }
         },
         mounted() {
+            // Récupération des informations de l'utilisateur connecté pour pouvoir les afficher sur la page
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let url = `http://localhost:3000/api/auth/${this.userId}`;
             let options = {
@@ -97,6 +100,7 @@
             .catch(error => console.log(error))
         },
         methods: {
+            // Fonction pour supprimer son compte utilisateur
             deleteAccount() {
                 this.userId = JSON.parse(localStorage.getItem("userId"));
                 let url = `http://localhost:3000/api/auth/${this.userId}`;
@@ -115,6 +119,8 @@
                     .then(this.$router.push("/signup"))
                     .catch(error => console.log(error))
             },
+
+            // Fonction pour afficher le bouton de modification de sa biographie 
             modifAccount() {
                 let hidden = document.getElementById("bio-user")
                 hidden.style.display = "none";
@@ -127,6 +133,8 @@
                 let flex2 = document.getElementById("annuler")
                 flex2.style.display = "flex";
             },
+
+            // Fonction pour afficher le bouton de modification de sa photo
             modifPicture() {
                 let hidden = document.getElementById("bio-user")
                 hidden.style.display = "none";
@@ -139,6 +147,8 @@
                 let flex2 = document.getElementById("annuler")
                 flex2.style.display = "flex";
             },
+
+            // Fonction pour afficher le bouton de suppression de compte
             supprUser() {
                 let hidden = document.getElementById("bio-user")
                 hidden.style.display = "none";
@@ -151,6 +161,8 @@
                 let flex2 = document.getElementById("annuler")
                 flex2.style.display = "flex";
             },
+
+            // Fonction pour annuler les modifications et la suppression
             annuler() {
                 let hidden = document.getElementById("fileUser")
                 hidden.style.display = "none";
@@ -163,14 +175,14 @@
                 let block = document.getElementById("bio-user")
                 block.style.display = "block";
             },
+
+            // Fonction pour modifier sa biographie via axios.put
             modifyBio() {
                 this.userId = JSON.parse(localStorage.getItem("userId")); 
                 
-                /* on créé un objet formData afin de pouvoir ajouter le texte et surtout le file choisi */
                 let formData = new FormData()
                 formData.append('bio', this.user.bio)
                 
-                /* envoi du form via axios.put de l'objet formData */
                 axios.put(`http://localhost:3000/api/auth/${this.userId}`, formData, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -179,8 +191,9 @@
                     .then(res => this.$emit('modif-bio', res.data), (window.location.reload()))
                     .catch(error => console.log(error))
             },
+
+            // Fonction pour ajouter un fichier image
             updateFile(event) {
-                /* sur le onchange on va attribuer cette valeur à file (nécessaire pour l'envoi au backend) */
                 this.file = this.$refs.file.files[0]
                 let input = event.target
                 if(input.files) {
@@ -191,14 +204,14 @@
                     reader.readAsDataURL(input.files[0])
                 }
             },
-            modifyPost() {
+
+            // Fonction pour modifier sa photo via axios.put
+            modifyPicture() {
                 this.userId = JSON.parse(localStorage.getItem("userId")); 
                 
-                /* on créé un objet formData afin de pouvoir ajouter le texte et surtout le file choisi */
                 let formData = new FormData()
                 formData.append('profil_image', this.file)
                 
-                /* envoi du form via axios.put de l'objet formData */
                 if (confirm("êtes vous sûr de vouloir modifier votre photo ?")) {
                     axios.put(`http://localhost:3000/api/auth/profil/${this.userId}`, formData, {
                         headers: {

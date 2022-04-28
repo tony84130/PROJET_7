@@ -28,10 +28,12 @@
 </template>
 
 <script>
+    // Importation des composants Pseudo, Likes, Comments, AddComment
     import Pseudo from '../components/Pseudo.vue'
     import Likes from '../components/Likes.vue'
     import Comments from '../components/Comments.vue'
     import AddComment from '../components/AddComment.vue'
+
     export default {
         name: "ListPost",
         components: {
@@ -60,6 +62,7 @@
             }
         },
         beforeCreate() {
+            // Récupération des informations de l'utilisateur connecté pour savoir si il est administrateur
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
             let optionsUser = {
@@ -78,6 +81,7 @@
                 .catch(error => console.log(error)) 
         },
         mounted() {
+            // Récupération des posts d'un utilisateur
             this.userId = JSON.parse(localStorage.getItem("userId"));
             const parsedUrl = new URL(window.location.href)
             const userPageId = parsedUrl.pathname.split('/user/')[1]
@@ -98,6 +102,7 @@
                 .catch(error => console.log(error))
         },
         methods: {
+            // Fonction pour supprimer une publication
             deleteMessage(id_post) {
                 this.userId = JSON.parse(localStorage.getItem("userId"));
                 let url = "http://localhost:3000/api/post/" + id_post;
@@ -107,12 +112,15 @@
                         'Authorization': 'Bearer ' + localStorage.getItem("token"),
                     }
                 };
-                fetch(url, options)
-                    .then((response) => {
-                        console.log(response);
-                        window.location.reload();
-                    })
-                    .catch(error => console.log(error))
+                // Confirmation de suppression d'une publication
+                if (confirm("Êtes vous sûr de vouloir supprimer ce post ?")) {
+                    fetch(url, options)
+                        .then((response) => {
+                            console.log(response);
+                            window.location.reload();
+                        })
+                        .catch(error => console.log(error))
+                }
             },
         },
     }

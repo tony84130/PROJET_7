@@ -6,7 +6,9 @@
 </template>
 
 <script>
+    // Importation de router
     import router from '../router'
+
     export default {
         name: "userPseudo",
         props : {
@@ -23,12 +25,12 @@
             }
         },
         mounted() {
+            // Récupération du prénom, du nom et de la photo de l'utilisateur  
             if(this.parentPost == undefined){
                 console.log("no parent, the commponent is not created");
             }
             else{
                 let url = `http://localhost:3000/api/auth/${this.parentPost}`;
-                //let url = `http://localhost:3000/api/auth/1`;
                 //console.log(url)
                 //console.log(this.parentPost)
                 let options = {
@@ -50,6 +52,7 @@
                 }
         },
         methods: {
+            // Fonction pour se rendre vers la page de l'utilisateur
             userPage() {
                 router.push({ path: `/user/${this.parentPost}` })
             },

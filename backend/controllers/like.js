@@ -37,7 +37,7 @@ exports.likePost = (req, res, next) => {
 exports.getLikePost = (req, res, next) => {
   //const postId = req.body.id;
   const postId = req.params.id;
-  const sql = `SELECT user_id FROM likes WHERE post_id = ${postId};`;
+  const sql = `SELECT * FROM likes WHERE post_id = ${postId};`;
   db.query(sql, (err, docs) => {
     if (err) {
       res.status(404).json({ err });

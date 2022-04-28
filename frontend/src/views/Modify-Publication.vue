@@ -38,8 +38,10 @@
 </template>
 
 <script>
+    // Récupération du composant Navbar et de Axios
     import Nav from "@/components/Navbar.vue";
     import axios from 'axios';
+
     export default {
         name: 'ModifPost',
         components: {
@@ -67,6 +69,7 @@
             }
         },
         beforeCreate() {
+            // Récupération du post à modifier via les informations passé par l'url
             const parsedUrl = new URL(window.location.href)
             const userPageId = parsedUrl.pathname.split('/publication/')[1]
             this.userId = JSON.parse(localStorage.getItem("userId"));
@@ -93,19 +96,20 @@
                 .catch(error => console.log(error))
         },  
         methods: {
+            // Modification du texte du post via axios.put 
             async modifyPost() {
                 const parsedUrl = new URL(window.location.href)
                 const userPageId = parsedUrl.pathname.split('/publication/')[1]
-                /* on peut envoyer un post sans image mais il faut au moins qu'il y est un texte */     
+                
+                // Il faut que la partie texte soit remplie
                 if (!this.post.message) {
                     this.errMsg = "Vous devez remplir le champ message pour modifier votre publication!"
                     return
                 }
-                /* on créé un objet formData afin de pouvoir ajouter le texte choisi */
+                
                 let formData = new FormData()
                 formData.append('message', this.post.message)
                 
-                /* envoi du form via axios.put de l'objet formData */
                 axios.put(`http://localhost:3000/api/post/${userPageId}`, formData, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -115,6 +119,8 @@
                     .catch(error => console.log(error))
                     window.location.reload();
             },
+
+            // Fonction pour retourner sur la page d'acceuil
             goHome() {
                 this.$router.push("/");
             } 
@@ -159,7 +165,7 @@
         margin: 0px 0px 15px 0px;
     }
 
-    #post {
+    #container-modif #post {
         border: 2px solid grey;
         background-color: white;
         border-radius: 5px;
@@ -169,7 +175,7 @@
         box-shadow: 0px 0px 10px black;;
     }
 
-    #first-line {
+    #container-modif #first-line {
         border: 1px solid grey;
         display: flex;
         height: 60px;
@@ -221,12 +227,12 @@
         object-fit: contain;
     }
 
-    #texte-post {
+    #container-modif #texte-post {
         padding: 10px;
         border: 1px solid grey;
     }
 
-    #modif-post {
+    #container-modif #modif-post {
         margin-top: 10px;
         border: 2px solid grey;
         background-color: white;

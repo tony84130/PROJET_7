@@ -55,6 +55,7 @@
             }
         },
         methods: {
+            // On récupère les informations de création de compte puis on les transmet à la base donnée
             signup() {
                 let inputDatas = {
                     "prenom": this.inputSignup.prenom,
@@ -75,12 +76,10 @@
                 fetch(url, options)
                     .then(res => res.json())
                     .then((res) => {
-                        /*if (res.userId && res.token){*/
                         localStorage.setItem("userId", res.userId);
                         localStorage.setItem("token", res.token);
                         this.$router.push("/login");
                         //alert("Bienvenue sur le réseau social de Groupomania, vous pouvez dès à présent vous connecter.  ");
-                        /*} */
                     })
                     .catch(error => console.log(error))
             }

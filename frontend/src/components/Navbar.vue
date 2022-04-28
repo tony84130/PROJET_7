@@ -7,7 +7,7 @@
         </div>
         <div id="search">
             <i class="fas fa-search"></i>
-            <input type="search" placeholder="Rechercher">
+            <input v-model="searchKey" type="search" placeholder="Rechercher">
         </div>
         <div id="nav-droite">
             <router-link to="/" title="Home"><i class="fas fa-home"></i></router-link> 
@@ -21,14 +21,35 @@
             </router-link>
             <button @click="logoutSession" id="iconOff" class="accountbutton"><i class="fas fa-power-off"></i></button> 
         </div>
+
+        <div id="container-user-list" v-if="searchKey && filteredList.length >= 1">
+            <div v-for="user in filteredList" :key="user.id" id="user-list" @click="userPage(user.id)">
+                <img v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
+                <img v-else src="../assets/avatar.png" alt="photo user">
+                <div>{{ user.prenom }} {{ user.nom }}</div>
+            </div> 
+        </div>
+        
+        <div id="container-user-list" v-if="searchKey && filteredListName.length >= 1">
+            <div v-for="user in filteredListName" :key="user.id" id="user-list" @click="userPage(user.id)">
+                <img v-if="user.picture != `avatar.png`" v-bind:src="user.picture" :key="user.picture" alt="photo user">
+                <img v-else src="../assets/avatar.png" alt="photo user">
+                <div>{{ user.prenom }} {{ user.nom }}</div>
+            </div> 
+        </div>
+
+        <div id="container-user-list" v-if="searchKey && filteredList.length == 0 && filteredListName.length == 0">
+            <div id="user-list" class="zeroResultat">Aucun résultat trouvé !</div>
+        </div>
     </nav>
+
+    
 </template>
 
 <script>
+    import router from '../router'
     export default {
         name: "List-user",
-        components: {
-        },
         data() {
             return {
                 user: {
@@ -37,11 +58,50 @@
                     nom: "",
                     userId: "",
                     picture: "",
-                    bio: ""
-                }
+                    bio: "",
+                },
+                searchKey: "",
+                users: []
             }
         },
+        computed: {
+            // Création du filtre pour pouvoir rechercher un utilisateur
+            filteredList(){
+                return this.users.filter(userss => {
+                    return userss.prenom.toLowerCase().includes(this.searchKey.toLowerCase());
+                })
+            },
+            filteredListName(){
+                return this.users.filter(userss => {
+                    return userss.nom.toLowerCase().includes(this.searchKey.toLowerCase());
+                })
+            }
+        },
+        beforeCreate() {
+            // Récupération de tous les utilisateur pour pour la fonction de recherche utilisateur
+            this.userId = JSON.parse(localStorage.getItem("userId"));
+            let url = "http://localhost:3000/api/auth";
+            let options = {
+                method: "GET",
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
+                }
+            };
+            fetch(url, options)
+                .then((res) => {
+                    res.json().then(data =>{
+                        this.users=data; 
+                        this.users.id=data.id;
+                        this.users.picture = data[0].picture;
+                        this.users.prenom = data[0].prenom;
+                        this.users.nom = data[0].nom;
+                        this.users.bio = data[0].bio;
+                    })
+                })
+                .catch(error => console.log(error)) 
+        },
         mounted() {
+            // Récupération de l'utilisateur connecté pour la photo sur la NavBar
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let url = `http://localhost:3000/api/auth/${this.userId}`;
             let options = {
@@ -63,6 +123,12 @@
             .catch(error => console.log(error))
         },
         methods: {
+            // Fonction pour aller sur la page d'un utilisateur
+            userPage(id) {
+                router.push({ path: `/user/${id}` })
+            },
+
+            // Fonction pour la deconnexion de l'utilisateur
             logoutSession(){
                 localStorage.clear();
                 this.$router.push("/login")
@@ -105,6 +171,7 @@
         border: 1px solid grey;
         position: fixed;
         width: 100%;
+        height: 70px;
         z-index: 1;
     }
 
@@ -170,6 +237,37 @@
         border-radius: 200px;
     }
 
+    #container-user-list {
+        position: absolute;
+        top: 70px;
+        left: 0px;
+        width: 100%;
+    }
+    
+    #user-list {
+        width: 50%;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        margin: auto;
+        background-color: white;
+        z-index: 1;
+        border: 1px solid grey;
+    }
+
+    #user-list img{
+        width: 50px;
+        height: 100%;
+        object-fit: cover;
+        margin-right: 10px;
+        border-right: 1px solid grey;
+    }
+
+    .zeroResultat {
+        justify-content: center;
+        font-weight: bold;
+    }
+
     @media screen and (max-width: 750px) {
         nav {
             padding: 10px 15px;
@@ -191,6 +289,15 @@
 
         #search {
             width: 200px;
+        }
+
+        #container-user-list {
+            height: 100vh;
+            background-color: white;
+        }
+
+        #user-list {
+            width: 100%;
         }
     }
 

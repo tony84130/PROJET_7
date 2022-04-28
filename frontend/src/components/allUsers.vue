@@ -1,6 +1,6 @@
 <template>
     <div id="container">
-        <div id="container-droite" class="bloc">
+        <div id="container-droite">
             <h2>suggestions</h2>
             <div id="suggestions">
 
@@ -20,7 +20,9 @@
 </template>
 
 <script>
+    // Importation du router
     import router from '../router'
+    
     export default {
         name: "ListUser",
         data() {
@@ -36,6 +38,7 @@
             }
         },
         beforeCreate() {
+            // Récupération de tous les utilisateurs
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let url = "http://localhost:3000/api/auth";
             let options = {
@@ -54,24 +57,9 @@
                 .catch(error => console.log(error)) 
         },
         methods: {
+            // Fonction pour aller sur la page profil d'un utilisateur
             userPage(id) {
                 router.push({ path: `/user/${id}` })
-            },
-            deleteMessage(id_post) {
-                this.userId = JSON.parse(localStorage.getItem("userId"));
-                let url = "http://localhost:3000/api/post/" + id_post;
-                let options = {
-                    method: "DELETE",
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem("token"),
-                    }
-                };
-                fetch(url, options)
-                    .then((response) => {
-                        console.log(response);
-                        window.location.reload();
-                    })
-                    .catch(error => console.log(error))
             },
         },
     }         
@@ -192,23 +180,20 @@
     }
 
     @media screen and (max-width: 750px) {
-
         #container-droite {
-            width: 500px;
+            width: 96%;
         }
     }
 
     @media screen and (max-width: 550px) {
 
-        #container-droite {
-            width: 400px;
-        }
+        
     }
 
     @media screen and (max-width: 450px) {
-
         #container-droite {
-            width: 300px;
+            width: 98%;
         }
+        
     }
 </style>

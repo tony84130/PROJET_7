@@ -44,6 +44,7 @@
             }
         },
         methods: {
+            // Récupération des informations de connexion puis connexion de l'utilisateur
             login() {
                 let loginData = {
                     "email": this.inputLogin.email,
@@ -69,6 +70,7 @@
                                 alert(" Identifiant ou Mot de passe incorrect ! ");
                                 return -1
                             }
+                            // On passe l'ID de l'utilisateur et le Token dans le localStorage puis on redirige l'utilisateur vers la page d'acceuil
                             else {
                                 localStorage.setItem("userId", content.userId),
                                 localStorage.setItem("token", content.token)

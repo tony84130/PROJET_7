@@ -19,7 +19,9 @@
 </template>
 
 <script>
+    // Importation de axios
     import axios from 'axios';
+
     export default {
         name: 'CreatePost',
         data() {
@@ -31,8 +33,8 @@
             }
         },
         methods: {
+            // Récupération du fichier image
             selectFile(event) {
-                /* sur le onchange on va attribuer cette valeur à file (nécessaire pour l'envoi au backend) */
                 this.file = this.$refs.file.files[0]
                 let input = event.target
                 if(input.files) {
@@ -43,18 +45,20 @@
                     reader.readAsDataURL(input.files[0])
                 }
             },
+
+            // Fonction pour la création d'une publication via axios.post
             createPost() {
-                /* on peut envoyer un post sans image mais il faut au moins qu'il y est un texte */     
+                // Il faut que la partie texte soit remplie ou qu'un fichier soit choisi
                 if (!this.message && !this.file) {
                     this.errMsg = "Vous devez remplir le champ texte ou importer une photo pour créer une nouvelle publication!"
                     return
                 }
-                /* on créé un objet formData afin de pouvoir ajouter le texte et surtout le file choisi */
+                
                 let formData = new FormData()
                 formData.append('message', this.message)
                 formData.append('image', this.file)
                 formData.append('userId', localStorage.getItem('userId'))
-                /* envoi du form via axios.put de l'objet formData */
+
                 axios.post('http://localhost:3000/api/post/', formData, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -63,8 +67,8 @@
                     .then(res => this.$emit('add-Post', res.data), console.log("Post envoyé !")/*(window.location.reload())*/)
                     //.then(window.location.reload())
                     .catch(error => console.log(error))
-                /* on emit le toggle-Create pour cacher ce composant tout en effaçant les inputs */
-                this.$emit('toggle-Create')
+                
+                // On efface les inputs après l'envoie de la publication
                 this.message = ''
                 this.file = ''
                 this.preview = ''
@@ -139,16 +143,6 @@
         border: none;
         height: 100%;
         padding: 5px 10px;
-    }
-
-    
-
-    #message {
-        
-    }
-
-    input[type="file"] {
-        
     }
 
     #preview {

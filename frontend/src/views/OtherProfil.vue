@@ -9,7 +9,7 @@
 </template>
 
 <script>
-  // @ is an alias to /src
+  // Récupération des composants qui vont créer la page profil d'un autre utilisateur
   import Nav from "@/components/Navbar.vue";
   import User from "@/components/UserPage.vue";
   import Post from "@/components/allPostsFromOtherUser.vue";

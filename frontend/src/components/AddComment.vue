@@ -25,10 +25,12 @@
             }      
         },
         methods: { 
+            // Fonction pour la création d'un commentaire
             createComment() {
                 this.userId = JSON.parse(localStorage.getItem("userId"));
                 this.comment.post_id = this.parentPost
                 if(this.comment.post_id == undefined) return -1
+                
                 let inputComment= {
                     "post_id": this.parentPost,
                     "text": this.comment.text,
