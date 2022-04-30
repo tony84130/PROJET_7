@@ -11,7 +11,7 @@
 <script>
   // Récupération des composants qui vont créer la page profil d'un autre utilisateur
   import Nav from "@/components/Navbar.vue";
-  import User from "@/components/UserPage.vue";
+  import User from "@/components/OtherUserInfos.vue";
   import Post from "@/components/allPostsFromOtherUser.vue";
   export default {
     name: "Profil-page",
