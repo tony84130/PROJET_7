@@ -31,7 +31,7 @@
 
 <script>
     // Importation de ...
-    import Post from '../components/publication-test.vue'
+    import Post from '../components/publication.vue'
     import Pseudo from '../components/Pseudo.vue'
     import Likes from '../components/Likes.vue'
     import Comments from '../components/Comments.vue'
