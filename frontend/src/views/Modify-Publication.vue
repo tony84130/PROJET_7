@@ -117,7 +117,8 @@
                 })  
                     .then(res => this.$emit('Modif-Post', res.data), console.log("Post modifié !"))
                     .catch(error => console.log(error))
-                    window.location.reload();
+                    this.$router.push("/");
+                    //window.location.reload();
             },
 
             // Fonction pour retourner sur la page d'acceuil
@@ -218,7 +219,8 @@
     #photo-post {
         width: 100%;
         height: 100%;
-        border: 2px solid grey;
+        border-top: 1px solid grey;
+        border-bottom: 1px solid grey;
     }
 
     #photo-post img {
@@ -229,7 +231,8 @@
 
     #container-modif #texte-post {
         padding: 10px;
-        border: 1px solid grey;
+        border-top: 1px solid grey;
+        border-bottom: 1px solid grey;
     }
 
     #container-modif #modif-post {

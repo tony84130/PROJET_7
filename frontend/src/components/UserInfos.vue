@@ -57,6 +57,8 @@
 <script>
     // Importation de axios
     import axios from 'axios';
+    //import router from '../router'
+    import { watchEffect } from 'vue';
     
     export default {
         name: "List-user",
@@ -77,27 +79,30 @@
                 }
             }
         },
-        mounted() {
-            // Récupération des informations de l'utilisateur connecté pour pouvoir les afficher sur la page
-            this.userId = JSON.parse(localStorage.getItem("userId"));
-            let url = `http://localhost:3000/api/auth/${this.userId}`;
-            let options = {
-                method: "GET",
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
-                }
-            };
-            fetch(url, options)
-                .then((res) => {
-                    res.json().then(data =>{
-                this.user=data;
-                this.user.picture = data[0].picture;
-                this.user.prenom = data[0].prenom;
-                this.user.nom = data[0].nom;
-                this.user.bio = data[0].bio;        
-            })
-            })
-            .catch(error => console.log(error))
+        created() {
+            watchEffect(() => {
+                // Récupération des informations de l'utilisateur connecté pour pouvoir les afficher sur la page
+                this.userId = JSON.parse(localStorage.getItem("userId"));
+                let url = `http://localhost:3000/api/auth/${this.userId}`;
+                let options = {
+                    method: "GET",
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem("token"),
+                    }
+                };
+                fetch(url, options)
+                    .then((res) => {
+                        res.json().then(data =>{
+                        this.user=data;
+                        this.user.picture = data[0].picture;
+                        this.user.prenom = data[0].prenom;
+                        this.user.nom = data[0].nom;
+                        this.user.bio = data[0].bio;        
+                        })
+                    })
+                .catch(error => console.log(error))
+                })
+            
         },
         methods: {
             // Fonction pour supprimer son compte utilisateur
@@ -218,8 +223,14 @@
                             Authorization: `Bearer ${localStorage.getItem('token')}`
                         },
                     })  
-                        .then(res => this.$emit('modif-picture', res.data), console.log("Photo modifié !") )
-                        //.then(window.location.reload())
+                        .then(res => {
+                            //this.$emit('modif-picture', res.data)
+                            console.log(res.data)
+                            //watchEffect(() => {this.user.picture = null})
+                            window.location.reload()
+                            //this.userId = JSON.parse(localStorage.getItem("userId"));
+                            //router.push({ path: `/profil` })
+                            })
                         .catch(error => console.log(error))
                 }
                 //window.location.reload()

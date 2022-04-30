@@ -21,6 +21,7 @@
 <script>
     // Importation de axios
     import axios from 'axios';
+    //import router from '../router';
 
     export default {
         name: 'CreatePost',
@@ -34,7 +35,7 @@
         },
         methods: {
             // Récupération du fichier image
-            selectFile(event) {
+            async selectFile(event) {
                 this.file = this.$refs.file.files[0]
                 let input = event.target
                 if(input.files) {
@@ -47,7 +48,7 @@
             },
 
             // Fonction pour la création d'une publication via axios.post
-            createPost() {
+            async createPost() {
                 // Il faut que la partie texte soit remplie ou qu'un fichier soit choisi
                 if (!this.message && !this.file) {
                     this.errMsg = "Vous devez remplir le champ texte ou importer une photo pour créer une nouvelle publication!"
@@ -64,8 +65,9 @@
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     },
                 })  
-                    .then(res => this.$emit('add-Post', res.data), console.log("Post envoyé !")/*(window.location.reload())*/)
-                    //.then(window.location.reload())
+                    .then(res => this.$emit('add-Post', res.data), alert("Post envoyé !")/*(window.location.reload())*/)
+                    //.then(router.push({ path: `/` }))
+                    .then(window.location.reload())
                     .catch(error => console.log(error))
                 
                 // On efface les inputs après l'envoie de la publication

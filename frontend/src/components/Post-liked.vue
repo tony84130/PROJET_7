@@ -1,22 +1,27 @@
 <template>
     <div id="container-centraux-liked" class="bloc">
 
-    <!-- Liste des posts -->   
-      <div v-for="post in post" id="post" :key="post.id" class="bloclist">
+    <h2>Vous retrouvez ici les publications que vous avez aimés :</h2>
 
+    <!-- Liste des posts -->   
+      <div v-for="post in post"  id="post" :key="post.id" class="bloclist">
+        <div v-if="post">
             <div id="first-line">
                 <div id="user-info">
                     <Pseudo :parentPost="post.user_id"/>
                 </div>
-                <!-- <button v-if="post.posterId == this.userId || users.isAdmin == 1" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button> -->
-                <!-- <button v-if="post.posterId == this.userId || users.isAdmin == 1" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button> -->
+                <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="modifPost(post.post_id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button>
+                <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="deletePost(post.post_id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
             </div>
             
+            <!-- <Post :parentPost="checkPostId(post.post_id)"/> -->
+
             <Post :parentPost="post.post_id"/>
 
             <Likes :parentPost="post.post_id"/>
             <Comments :parentPost="post.post_id"/>
             <AddComment :parentPost="post.post_id"/>
+        </div>
       </div>   
   </div>
 
@@ -31,6 +36,8 @@
     import Likes from '../components/Likes.vue'
     import Comments from '../components/Comments.vue'
     import AddComment from '../components/AddComment.vue'
+    import router from '../router'
+
     export default {
         name: "ListPost",
         components: {
@@ -45,10 +52,17 @@
                 post: {
                     user_id: "",
                     post_id: ""
+                },
+                user: {
+                    userId: "",
+                    isAdmin: "",
+                    id: "",
+                    prenom: "",
+                    nom: "",
                 }
             }
         },
-        mounted() {
+        beforeCreate() {
             this.userId = JSON.parse(localStorage.getItem("userId"));
             let url = `http://localhost:3000/api/post/get-like-user/${this.userId}`;
             let options = {
@@ -66,7 +80,26 @@
                 })
                 .catch(error => console.log(error))
         },
+        created() {
+            // Récupération des informations de l'utilisateur connecté pour savoir si il est administrateur
+            this.userId = JSON.parse(localStorage.getItem("userId"));
+            let urlUser = `http://localhost:3000/api/auth/${this.userId}`;
+            let optionsUser = {
+                method: "GET",
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
+                }
+            };
+            fetch(urlUser, optionsUser)
+                .then((res) => {
+                    res.json().then(data =>{
+                        this.user = data[0];
+                    })
+                })
+                .catch(error => console.log(error)) 
+        },
         methods: {
+            // Fonction pour supprimer une publication
             deletePost(id_post) {
                 this.userId = JSON.parse(localStorage.getItem("userId"));
                 let url = "http://localhost:3000/api/post/" + id_post;
@@ -76,14 +109,35 @@
                         'Authorization': 'Bearer ' + localStorage.getItem("token"),
                     }
                 };
-                fetch(url, options)
-                    .then((response) => {
-                        console.log(response);
-                        window.location.reload();
-                    })
-                    .catch(error => console.log(error))
+                // Confirmation de suppression d'une publication
+                if (confirm("Êtes vous sûr de vouloir supprimer ce post ?")) {
+                    fetch(url, options)
+                        .then((response) => {
+                            console.log(response);
+                            //console.log("Post supprimé !");
+                            window.location.reload();
+                        })
+                        .catch(error => console.log(error))
+                }
+            },
+
+            // Fonction pour se rendre sur la page de modification d'une publication
+            modifPost(id) {
+                router.push({ path: `/publication/${id}` })
             },
         },
+        computed: {
+            /*
+            checkPostId(id) {
+                let result= null;
+                if(id !== undefined)  {
+                    result = id;
+                }
+                return result;
+                //return id !== undefined ? id :
+            }
+            */
+        }
     }
 </script>
 
@@ -126,6 +180,11 @@
         padding-top: 100px;
     }
 
+    h2 {
+        margin-bottom: 30px;
+        font-size: 20px;
+    }
+
     #container-centraux-liked > div {
         margin: 0px 0px 15px 0px;
     }
@@ -133,6 +192,7 @@
     #post {
         border: 2px solid grey;
         background-color: white;
+        border-radius: 10px;
     }
 
     #post:hover {
@@ -140,9 +200,10 @@
     }
 
     #first-line {
-        border: 1px solid grey;
+        border-top: 1px solid grey;
+        border-bottom: 1px solid grey;
         display: flex;
-        height: 50px;
+        height: 60px;
         align-items: center;
         padding: 5px 10px 5px 5px;
         position: relative;
@@ -153,13 +214,26 @@
     #user-info {
         display: flex;
         align-items: center;
-        
         height: 100%;
     }
 
     #user-info img {
-        height: 100%;
+        height: 50px;
         margin-right: 5px;
+        width: 50px;
+        object-fit: cover;
+    }
+
+    #modifPost {
+        position: absolute;
+        right: 35px;
+        display: flex;
+        align-items: center;
+    }
+
+    #modifPost i {
+        position: relative;
+        top: 1px;
     }
 
     .accountbutton {
@@ -169,7 +243,8 @@
     #photo-post {
         width: 100%;
         height: 100%;
-        border: 2px solid grey;
+        border-top: 1px solid grey;
+        border-bottom: 1px solid grey;
     }
 
     #photo-post img {
@@ -180,14 +255,16 @@
 
     #texte-post {
         padding: 10px;
-        border: 1px solid grey;
+        border-top: 1px solid grey;
+        border-bottom: 1px solid grey;
     }
 
     #second-line {
         display: flex;
         justify-content: space-between;
         padding: 5px 15px;
-        border: 1px solid grey;
+        border-top: 1px solid grey;
+        border-bottom: 1px solid grey;
         font-weight: bold;
     }
 
@@ -200,16 +277,13 @@
         margin-right: 5px;
     }
 
-    #heart-count .fas {
-        display: none;
-        color: red;
-    }
-
     #comment {
-        border: 1px solid grey;
+        border-top: 1px solid grey;
+        border-bottom: 1px solid grey;
         display: flex;
         align-items: center;
         padding: 5px;
+        position: relative;
     }
 
     #user-comment {
@@ -225,6 +299,8 @@
 
     #user-comment img {
         height: 100%;
+        width: 50px;
+        object-fit: cover;
         margin-right: 5px;
     }
 
@@ -237,12 +313,14 @@
         justify-content: space-between;
         padding: 5px 10px;
         background-color: white;
-        border: 1px solid grey;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
     }
 
     #add-comment input {
         background-color: white;
         width: 85%;
+        border: none;
     }
 
     #add-comment button {

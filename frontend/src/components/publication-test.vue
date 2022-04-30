@@ -1,11 +1,12 @@
 <template>
-
-    <div id="photo-post">
-        <a href="">
-            <img v-if="posts.picturePost != null" :src="posts.picturePost" :key="posts.picturePost" alt="post user">
-        </a>
+    <div v-if="posts">
+        <div id="photo-post" v-for="post in posts" :key="post.id">
+            <a href="">
+                <img v-if="post.picturePost != null" :src="post.picturePost" :key="post.picturePost" alt="post user">
+            </a>
+        <div id="texte-post">{{ post.message }}</div>
+        </div>
     </div>
-    <div id="texte-post">{{ posts.message }}</div>
             
 </template>
 
@@ -18,11 +19,6 @@
         },
         data() {
             return {
-                post: {
-                    user_id: "",
-                    post_id: "",
-                    message: ""
-                },
                 posts: {
                     user_id: "",
                     post_id: "",
@@ -30,7 +26,7 @@
                 }
             }
         },
-        mounted() {
+        created() {
             if (this.parentPost == undefined) {
                 console.log("parentPost undefined");
             }
@@ -46,9 +42,9 @@
             fetch(url, options)
                 .then((res) => {
                     res.json().then(data =>{
-                        this.post=data;
-                        this.posts=data[0];
-                        //console.log(data)         
+                        //this.post=data;
+                        this.posts=data;
+                        //console.log(this.posts)         
                     })
                 })
                 .catch(error => console.log(error))

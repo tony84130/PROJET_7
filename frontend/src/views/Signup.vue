@@ -17,6 +17,7 @@
                 <label for="email">E-mail :</label>
                 <input type="email" id="email" name="email" class="form-control" placeholder="Email" required 
                 pattern="[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+.[a-zA-Z.]{2,15}" v-model="inputSignup.email"/>
+                <p id="erreur">{{ errMsg }}</p>
               
                 <label for="password"> Mot de passe :</label>
                 <input type="password" id="password" name="password" class="form-control" placeholder="Mot de passe" required
@@ -51,7 +52,8 @@
                     nom: "",
                     email: "",
                     password: ""
-                }
+                },
+                errMsg: null
             }
         },
         methods: {
@@ -78,7 +80,11 @@
                     .then((res) => {
                         localStorage.setItem("userId", res.userId);
                         localStorage.setItem("token", res.token);
-                        this.$router.push("/login");
+                        if (res.status === 200 ) {
+                            this.$router.push("/login");
+                        }  else {
+                            this.errMsg = "Utilisateur dejà existant !"
+                        }
                         //alert("Bienvenue sur le réseau social de Groupomania, vous pouvez dès à présent vous connecter.  ");
                     })
                     .catch(error => console.log(error))
@@ -111,6 +117,10 @@
 
     p {
         text-align: center;
+    }
+
+    #erreur {
+        color: red;
     }
 
     label {
