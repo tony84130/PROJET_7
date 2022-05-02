@@ -15,9 +15,7 @@
                 <button v-if="post.posterId" type="button" @click="deleteMessage(post.id)" id="trash" class="accountbutton"><i class="fas fa-trash"></i></button>
             </div>
             <div id="photo-post" v-if="post.picturePost != null">
-                <a href="">
-                    <img v-if="post.picturePost != null" :src="post.picturePost" :key="post.picturePost" alt="post user">
-                </a>
+                <img v-if="post.picturePost != null" :src="post.picturePost" :key="post.picturePost" alt="post user">
             </div>
             <div v-if="post.message != 'null'" id="texte-post">{{ post.message }}</div>
             
@@ -181,16 +179,16 @@
     #container-post {
         display: flex;
         flex-wrap: wrap;
-        width: 1000px;
+        width: 90%;
         margin: auto;
     }
 
     #postUser {
         border: 2px solid grey;
         border-radius: 10px;
-        width: 450px;
+        width: 51%;
         flex-wrap: wrap;
-        margin: 15px;
+        margin: 15px auto 15px auto;
         height: min-content;
         background-color: white;
     }
@@ -360,11 +358,19 @@
     
     @media screen and (max-width: 1050px) {
         #container-post {
-            width: 850px;
+            width: 100%;
         }
 
         #postUser {
-            width: 370px;
+            width: 55%;
+        }
+
+        #postUser #photo-post {
+            height: 300px;
+        }
+
+        #postUser #photo-post img {
+            height: 100%;
         }
 
         #postUser #postPseudo {
@@ -376,11 +382,11 @@
 
     @media screen and (max-width: 850px) {
         #container-post {
-            width: 700px;
+            width: 90%;
         }
 
         #postUser {
-            width: 300px;
+            width: 100%;
         }
 
         #postUser #postPseudo {
@@ -389,16 +395,12 @@
     }
 
     @media screen and (max-width: 700px) {
-        #container-post {
-            width: 450px;
-        }
-
-        #postUser {
-            width: 450px;
+        #postUser #photo-post {
+            height: 300px;
         }
 
         #postUser #photo-post img {
-            height: 300px;
+            height: 100%;
         }
 
         #postUser #postPseudo {
@@ -415,32 +417,12 @@
 
 
     @media screen and (max-width: 500px) {
-        #container-post {
-            width: 400px;
-        }
-
-        #postUser {
-            width: 400px;
-        }
-
-        #postUser #photo-post img {
-            height: 250px;
+        #postUser #photo-post {
+            height: 200px;
         }
     }
 
     @media screen and (max-width: 400px) {
-        #container-post {
-            width: 300px;
-        }
-
-        #postUser {
-            width: 300px;
-        }
-
-        #postUser #photo-post img {
-            height: 200px;
-        }
-
         #postUser #postPseudo {
             width: 130px;
         }

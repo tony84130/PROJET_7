@@ -1,5 +1,5 @@
 <template>
-    <div id="container">
+    <div id="container-users">
         <div id="container-droite">
             <h2>suggestions</h2>
             <div id="suggestions">
@@ -89,7 +89,7 @@
         background-color: #EFEFEF;
     }
 
-    #container {
+    #container-users {
         display: flex;
         justify-content: space-around;
         padding: 20px;
@@ -141,6 +141,13 @@
         border: 1px solid grey;
     }
 
+    #user-suggestions > div {
+        height: 100%;
+        width: 130px;
+        display: flex;
+        align-items: center;
+    }
+
     @media screen and (max-width: 1300px) {
         #container-droite {
             width: 250px;
@@ -154,7 +161,7 @@
     }
 
     @media screen and (max-width: 1050px) {
-        #container {
+        #container-users {
             flex-direction: column;
             justify-content: center;
             align-items: center;

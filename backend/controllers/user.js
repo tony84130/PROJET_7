@@ -17,7 +17,6 @@ const creatToken = (id) => {
   })
 }
 
-// Vérifier pour le pseudo déjà existant ?? Celui dans les commentaires ??
 // Création d'un compte utilisateur
 exports.signUp = (req, res, next) => {
   console.log(req.body);
@@ -25,14 +24,9 @@ exports.signUp = (req, res, next) => {
   const email = req.body.email;
   const prenom = req.body.prenom;
   const nom = req.body.nom;
-  //const pseudo = req.body.pseudo;
-  //const sql = `SELECT email, pseudo FROM users WHERE email=? OR pseudo=?`;
   const sql = `SELECT email FROM users WHERE email=?`;
-  //const sqlPseudo = `SELECT pseudo FROM users WHERE pseudo=?`;
-  //let query = db.query(sql, email, pseudo, async (err, docs) => {
 
   let query = db.query(sql, email, async (err, docs) => {
-    //console.log(docs.length >= 1)
     if (err) throw err;
 
     if (!email || !password || !prenom || !nom ) {
@@ -73,7 +67,6 @@ exports.signUp = (req, res, next) => {
   
 };
 
-// Passer le pseudo à l'utilisateur connecté ??
 // Connexion à un compte utilisateur
 exports.login = (req, res, next) => {
   const email = req.body.email;
@@ -118,26 +111,12 @@ exports.login = (req, res, next) => {
   });
 };
 
-// À corriger !!!!!
 // Déconnexion d'un compte utilisateur
 exports.logout = (req, res, next) => {
   //res.cookie('jwt', '', { maxAge : 1 }).json({message: "Utilisateur deconnecté !"});
   console.log("utilisateur connecté");
   //res.redirect('/');
 }
-
-/*
-const token = creatToken(user._id);
-res.cookie('jwt', token, { httpOnly: true, maxAge })
-res.status(200).json({
-  userId: user._id,
-  token: jwt.sign(
-    { userId: user._id },
-    process.env.SECRET_TOKEN,
-    { expiresIn: '24h' }
-  )
-});
-*/
 
 // Récupération des infos de tous les utilisateurs
 exports.getAllUsers = (req, res, next) => {
@@ -168,107 +147,8 @@ exports.userProfil = (req, res, next) => {
     console.log(userId)
     console.log(id)
   })
-};
+}; 
 
-/*
-// Quand l'utilisateur existe deja ? sinon enlever la possibilité de changer le pseudo !
-// Regler probleme de nodemon crash quand il y a des erreurs
-// Modification des infos d'un utilisateur
-exports.updateUser = (req, res, next) => {
-  const userPageId = req.params.id;
-  const userId = req.auth.userId;
-  const pseudo = req.body.pseudo;
-  const email = req.body.email;
-  const bio = req.body.bio;
-  const file = req.file;
-  const sqlInfos = `SELECT pseudo, id, email, bio, picture FROM users WHERE id='${userPageId}'`;
-  const sqlAdminInfos = `SELECT isAdmin FROM users WHERE id='${userId}'`;
-  let adminCheckout = null;
-
-  let query = db.query(sqlAdminInfos, (err, docs) => {
-    if (err) throw err;
-    adminCheckout = docs[0].isAdmin;
-    let query = db.query(sqlInfos, (err, docs1) => {
-      if (err) throw err;
-      if (userId == `${docs1[0].id}` || adminCheckout === 1) {
-        if (file) {
-          const new_profil_image_url = `${req.protocol}://${req.get("host")}/images/profils/${req.file.filename}`;
-          console.log(docs1[0]);
-          console.log(docs1[0].picture);
-          if(docs1[0].picture !== null) {
-            oldFileName = docs1[0].picture.split("/images/profils/")[1];
-            if (oldFileName !== "avatar.png") {
-              fs.unlink(`images/profils/${oldFileName}`, () => {
-                if (err) console.log(err);
-                else {
-                  console.log("Ancienne image de profile supprimée");
-                }
-              });
-            }
-            const newUserInfos = {
-              //pseudo: pseudo,
-              //email: email,
-              bio: bio,
-              picture: new_profil_image_url,
-            };
-            
-            const sql = `UPDATE users SET ? WHERE id='${userPageId}'`;
-            let query = db.query(sql, newUserInfos, (err, docs) => {
-              if (err) {
-                res.status(500).json({
-                  error: "Erreur lors de la modification de l'utilisateur",
-                });
-                throw err;
-              }
-              res.status(200).json({ message: "Utilisateur modifié!" });
-              console.log("utilisateur modifié");
-            });
-          } else {
-            const newUserInfos = {
-              //pseudo: pseudo,
-              //email: email,
-              bio: bio,
-              picture: new_profil_image_url,
-            };
-            const sql = `UPDATE users SET ? WHERE id='${userPageId}'`;
-            let query = db.query(sql, newUserInfos, (err, docs) => {
-              if (err) {
-                res.status(500).json({
-                  error: "Erreur lors de la modification de l'utilisateur",
-                });
-                throw err;
-              }
-              res.status(200).json({ message: "Utilisateur modifié!" });
-              console.log("utilisateur modifié");
-            });
-          }
-        } else {
-          const newUserInfos = {
-            //pseudo: pseudo,
-            //email: email,
-            bio: bio
-          };
-          const sql = `UPDATE users SET ? WHERE id='${userPageId}'`;
-          let query = db.query(sql, newUserInfos, (err, docs) => {
-            if (err) {
-              res.status(500).json({
-                error: "Erreur lors de la modification de l'utilisateur",
-              });
-              throw err;
-            }
-            res.status(200).json({ message: "Utilisateur modifié!" });
-            console.log("utilisateur modifié");
-          });
-        }
-      } else {
-        return res.status(403).json({ error: "Accès refusé" });
-      }
-    });
-  });
-};
-*/
-
-// TEST
 // Modification de la biographie d'un utilisateur
 exports.updateUser = (req, res, next) => {
   const userPageId = req.params.id;
@@ -307,7 +187,6 @@ exports.updateUser = (req, res, next) => {
   });
 };
 
-// TEST
 // Modification de la photo de l'utilisateur
 exports.updatePictureUser = (req, res, next) => {
   const userPageId = req.params.id;
@@ -380,7 +259,6 @@ exports.updatePictureUser = (req, res, next) => {
   });
 };
 
-// Supprimé en cascade les posts, likes et commentaires de l'utilisateur ??
 // Suppression d'un utilisateur par l'auteur ou par l'administrateur
 exports.deleteUser = (req, res, next) => {
   const userPageId = req.params.id;

@@ -76,36 +76,4 @@ exports.getLikeUser = (req, res, next) => {
   });
 };
 
-/*
-// Récupération des likes d'un utilisateur
-exports.getLikeUser = (req, res, next) => {
-  //const posterId = req.auth.userId;
-  const posterId = req.params.id;
-  const sql = `SELECT id, post_id, user_id FROM likes WHERE user_id = ${posterId};`;
-  const sql1 = 'SELECT * FROM posts WHERE posts.id= ?';
-  let post = [];
-  db.query(sql, (err, docs) => {
-    if (err) {
-      res.status(404).json({ err });
-      throw err;
-    }
-    for (let pas = 0; pas < docs.length; pas++) {
-      db.query(sql1, post, (err, docs) => {
-        post = docs[pas].post_id;
-        //console.log(pas)
-        console.log(docs)
-        post += docs[pas].post_id;
-
-    })
-    }
-    if (err) res.status(404).json({err});
-    if (!err) res.status(200).json(docs);
-    
-    
-    
-  });
-};
-*/
-    
-
     

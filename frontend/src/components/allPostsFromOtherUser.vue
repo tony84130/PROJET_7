@@ -10,13 +10,11 @@
                     <!-- <div>{{ post.posterId }}</div> -->
                     <Pseudo :parentPost="post.posterId"/>
                 </div>
-                <!-- <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button> -->
+                <!-- <button v-if="post.posterId == this.userId" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button> -->
                 <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="deleteMessage(post.id)" id="trash" class="accountbutton"><i class="fas fa-trash"></i></button>
             </div>
             <div id="photo-post" v-if="post.picturePost != null">
-                <a href="">
-                    <img v-if="post.picturePost != null" :src="post.picturePost" :key="post.picturePost" alt="post user">
-                </a>
+                <img v-if="post.picturePost != null" :src="post.picturePost" :key="post.picturePost" alt="post user">
             </div>
             <div v-if="post.message != 'null'" id="texte-post">{{ post.message }}</div>
             
@@ -204,16 +202,16 @@
     #container-post-other {
         display: flex;
         flex-wrap: wrap;
-        width: 1000px;
+        width: 90%;
         margin: auto;
     }
 
     #container-post-other #post {
         border: 2px solid grey;
         border-radius: 10px;
-        width: 450px;
+        width: 51%;
         flex-wrap: wrap;
-        margin: 15px;
+        margin: 15px auto 15px auto;
         height: min-content;
         background-color: white;
     }
@@ -384,11 +382,19 @@
     
     @media screen and (max-width: 1050px) {
         #container-post-other {
-            width: 850px;
+            width: 100%;
         }
 
         #container-post-other #post {
-            width: 370px;
+            width: 55%;
+        }
+
+        #container-post-other #photo-post {
+            height: 300px;
+        }
+
+        #container-post-other #photo-post img {
+            height: 100%;
         }
 
         #container-post-other #postPseudo {
@@ -400,11 +406,11 @@
 
     @media screen and (max-width: 850px) {
         #container-post-other {
-            width: 700px;
+            width: 90%;
         }
 
         #container-post-other #post {
-            width: 300px;
+            width: 100%;
         }
 
         #container-post-other #postPseudo {
@@ -413,18 +419,6 @@
     }
 
     @media screen and (max-width: 700px) {
-        #container-post-other {
-            width: 450px;
-        }
-
-        #container-post-other #post {
-            width: 450px;
-        }
-
-        #container-post-other #photo-post img {
-            height: 300px;
-        }
-
         #container-post-other #postPseudo {
             width: 220px;
         }
@@ -439,12 +433,8 @@
 
 
     @media screen and (max-width: 500px) {
-        #container-post-other {
-            width: 400px;
-        }
-
-        #container-post-other #post {
-            width: 400px;
+        #container-post-other #photo-post {
+            height: 200px;
         }
 
         #container-post-other #photo-post img {
@@ -453,14 +443,6 @@
     }
 
     @media screen and (max-width: 400px) {
-        #container-post-other {
-            width: 300px;
-        }
-
-        #container-post-other #post {
-            width: 300px;
-        }
-
         #container-post-other #photo-post img {
             height: 200px;
         }

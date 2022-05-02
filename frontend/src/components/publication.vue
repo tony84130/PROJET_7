@@ -1,10 +1,10 @@
 <template>
     <div v-if="posts">
         <div id="photo-post" v-for="post in posts" :key="post.id">
-            <a href="">
+            <div id="photo">
                 <img v-if="post.picturePost != null" :src="post.picturePost" :key="post.picturePost" alt="post user">
-            </a>
-        <div id="texte-post">{{ post.message }}</div>
+            </div>
+            <div v-if="post.message != 'null'" id="texte-post">{{ post.message }}</div>
         </div>
     </div>
             

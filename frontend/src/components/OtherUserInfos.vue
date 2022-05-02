@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div id="bio-user">
-                <div v-if="user.bio != null && user.bio.length >1 ">{{ user.bio }}</div>
+                <div v-if="user.bio != null && user.bio != 'null' && user.bio.length >1 ">{{ user.bio }}</div>
             </div>
         </div>
     </div>
@@ -194,10 +194,11 @@
         }
 
         #container-other #container-secondaire {
-            margin: auto;
-            width: 700px;
+            width: 600px;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            margin-bottom: 10px;
         }
 
         #container-other #modif-and-delete-user {

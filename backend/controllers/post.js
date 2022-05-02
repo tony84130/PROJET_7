@@ -2,11 +2,8 @@ const dbc = require("../config/db");
 const db = dbc.getDB();
 const fs = require("fs");
 
-// Vérifier le tri des publications de la plus récente à la plus ancienne ??
 // Récupération de tous les posts
 exports.getAllPost = (req, res, next) => {
-    //const sql ="SELECT posts.id, posterId, message, posts.picturePost, datePost, isAdmin FROM posts JOIN users ON (users.id = posts.posterId);";
-    //const sql = `SELECT * FROM posts ORDER BY posterId`;
     const sql = `SELECT * FROM posts ORDER BY datePost DESC`;
 
     db.query(sql, (err, docs) => {

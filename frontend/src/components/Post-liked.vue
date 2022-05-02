@@ -10,7 +10,7 @@
                 <div id="user-info">
                     <Pseudo :parentPost="post.user_id"/>
                 </div>
-                <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="modifPost(post.post_id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button>
+                <button v-if="post.posterId == this.userId" type="button" @click="modifPost(post.post_id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button>
                 <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="deletePost(post.post_id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
             </div>
             
@@ -357,10 +357,19 @@
             width: 500px;
         }
 
+        #photo-post img {
+            height: 350px;
+        }
+
         #comment {
             flex-direction: column;
             align-items: flex-start;
             padding: 10px;
+
+        }
+
+        #comment #user-comment {
+            margin: 5px;
         }
     }
 
@@ -368,11 +377,19 @@
         #container-centraux-liked {
             width: 400px;
         }
+
+        #photo-post img {
+            height: 300px;
+        }
     }
 
     @media screen and (max-width: 450px) {
         #container-centraux-liked {
             width: 300px;
+        }
+
+        #photo-post img {
+            height: 200px;
         }
     }
 </style>

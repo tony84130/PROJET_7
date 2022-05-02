@@ -14,13 +14,12 @@ const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 const checkPassword = require("../middleware/password");
 const rateLimit = require("../middleware/rate-limiter");
-const requireAuth = require('../middleware/require-auth');
 
 // Auth
 // signUp
 router.post('/signup', /*rateLimit,*//* checkPassword,*/ userCtrl.signUp);
 // login
-router.post('/login', /*rateLimit, checkPassword,*/ userCtrl.login, /*requireAuth*/);
+router.post('/login', /*rateLimit, checkPassword,*/ userCtrl.login);
 // logout
 router.get('/logout', /*auth, checkPassword,*/ userCtrl.logout);
 

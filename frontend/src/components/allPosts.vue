@@ -9,7 +9,7 @@
                     <!-- <div>{{ post.posterId }}</div> -->
                     <Pseudo :parentPost="post.posterId"/>
                 </div>
-                <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button>
+                <button v-if="post.posterId == this.userId" type="button" @click="modifPost(post.id)" class="accountbutton" id="modifPost"><i class="fas fa-cog"></i></button>
                 <button v-if="post.posterId == this.userId || user.isAdmin == 1" type="button" @click="deletePost(post.id)" class="accountbutton"><div id="trash"><i class="fas fa-trash"></i></div></button>
             </div>
             <div id="photo-post">
@@ -44,7 +44,6 @@
         },
         data() {
             return {
-                
                 post: {
                     img:true,
                     surname: "",

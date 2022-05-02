@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div id="bio-user">
-                <div v-if="user.bio != null && user.bio.length >1 ">{{ user.bio }}</div>
+                <div v-if="user.bio != null && user.bio != 'null' && user.bio.length >1 ">{{ user.bio }}</div>
             </div>
             
             <div @click="annuler" id="annuler"><button type="submit">Annuler</button></div>

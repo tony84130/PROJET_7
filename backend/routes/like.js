@@ -15,7 +15,4 @@ router.get('/get-like-post/:id', auth, likeCtrl.getLikePost);
 router.get('/get-count-like-post/:id', auth, likeCtrl.getCountLikePost);
 router.get('/get-like-user/:id', auth, likeCtrl.getLikeUser);
 
-// Compteur de like ??
-//router.get('/count-like-post/:id', /*auth,*/ postCtrl.countLikePost);
-
 module.exports = router;

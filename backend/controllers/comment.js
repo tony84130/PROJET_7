@@ -93,23 +93,4 @@ exports.deleteCommentPost = (req, res, next) => {
     });
 };
 
-/*
-// Ajout d'un commentaire
-exports.commentPost = (req, res, next) => {
-    const message = req.body.message;
-    const post_id = req.body.id;
-    const posterId = req.body.posterId;
-    const commenterPseudo = req.body.pseudo;
-    const sql = `INSERT INTO posts comments (post_id, posterId, commenterPseudo, message, created_at) VALUES (post_id, posterId, commenterPseudo, message, CURRENT_TIMESTAMP)`;
-
-    db.query(sql, (err, docs) => {
-        if (err) {
-            res.status(404).json({err});
-            console.log(err);
-            throw err;
-        }
-        res.status(200).json(docs);
-    })
-}
-*/
 
