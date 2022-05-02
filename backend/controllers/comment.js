@@ -2,8 +2,7 @@
 const dbc = require("../config/db");
 const db = dbc.getDB();
 
-// Modifier la routes ou req.body.post_id ??
-// Ajout d'un commentaire
+// Création d'un commentaire
 exports.commentPost = (req, res, next) => {
     const newComment = {
       text: req.body.text,
@@ -18,7 +17,7 @@ exports.commentPost = (req, res, next) => {
     });
 };
 
-// Récupération des commentaires
+// Récupération de tous les commentaires
 exports.getCommentsPost = (req, res, next) => {
     const postId = req.params.id;
     //const sql ="SELECT * FROM comments WHERE post_id = ?;";

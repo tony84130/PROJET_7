@@ -17,6 +17,7 @@ const creatToken = (id) => {
   })
 }
 
+
 // Création d'un compte utilisateur
 exports.signUp = (req, res, next) => {
   console.log(req.body);
@@ -63,8 +64,6 @@ exports.signUp = (req, res, next) => {
         .catch((error) => res.status(500).json({ error }));
     }
   });
-
-  
 };
 
 // Connexion à un compte utilisateur
@@ -118,7 +117,7 @@ exports.logout = (req, res, next) => {
   //res.redirect('/');
 }
 
-// Récupération des infos de tous les utilisateurs
+// Récupération de tous les utilisateurs
 exports.getAllUsers = (req, res, next) => {
   const sql = `SELECT id, email, prenom, nom, isAdmin, bio, picture FROM users`;
   let query = db.query(sql, (err, docs) => {
@@ -137,7 +136,6 @@ exports.userInfo = (req, res, next) => {
   })
 };
 
-// À corriger !!!!!
 // Récupération des infos de l'utilisateur connecté
 exports.userProfil = (req, res, next) => {
   const userId = req.auth.userId;

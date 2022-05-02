@@ -2,7 +2,7 @@
 const dbc = require("../config/db");
 const db = dbc.getDB();
 
-// Ajout ou suppression d'un like 
+// Ajout ou suppression d'un like sur une publication
 exports.likePost = (req, res, next) => {
   const postId = req.params.id;
   const userId = req.auth.userId;

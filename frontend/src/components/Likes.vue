@@ -9,7 +9,6 @@
             -->
             <div @click="addLike"><i class="fas fa-heart"></i></div>
 
-
             <div id="zeroLike" v-if="like.length == 0 || like.length == undefined">Soyez le premier à aimer ce post !</div>
             <div id="zeroLikeSmall" v-if="like.length == 0 || like.length == undefined">0 j'aime</div>
             <div v-else>{{ like.length }} j'aime</div>
